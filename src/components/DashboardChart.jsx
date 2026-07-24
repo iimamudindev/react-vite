@@ -74,6 +74,7 @@ export default function DashboardChart({
           }
         },
       },
+    },
 
     labels: [
       "Admin",

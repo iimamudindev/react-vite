@@ -8,6 +8,8 @@ export default function DashboardChart({
 }) {
   const total = adminCount + userCount + staffCount;
 
+  const roles = ["admin", "user", "staff"];
+
   const barOptions = {
     chart: {
       type: "bar",
@@ -18,6 +20,11 @@ export default function DashboardChart({
         enabled: true,
         easing: "easeinout",
         speed: 800,
+      },
+      events: {
+        dataPointSelection(event, chartContext, config) {
+          onRoleClick?.(roles[config.dataPointIndex]);
+        },
       },
     },
 
@@ -39,32 +46,46 @@ export default function DashboardChart({
       enabled: true,
     },
 
-    xaxis: {
-      categories: ["Admin", "User", "Staff"],
-    },
-
     legend: {
       show: false,
+    },
+
+    xaxis: {
+      categories: ["Admin", "User", "Staff"],
     },
 
     grid: {
       borderColor: "#e9ecef",
     },
   };
+
   const donutOptions = {
     chart: {
       type: "donut",
+      toolbar: {
+        show: false,
+      },
       events: {
-        dataPointSelection(event, chartContext, config) {
-          console.log("Klik donut:", config.dataPointIndex);
+        click(event, chartContext, config) {
+          console.log(config);
 
-          const roles = ["admin", "user", "staff"];
-          onRoleClick?.(roles[config.dataPointIndex]);
+          if (config.dataPointIndex >= 0) {
+            onRoleClick?.(roles[config.dataPointIndex]);
+          }
         },
       },
-    },
 
-    labels: ["Admin", "User", "Staff"],
+    labels: [
+      "Admin",
+      "User",
+      "Staff",
+    ],
+
+    colors: [
+      "#dc3545",
+      "#198754",
+      "#ffc107",
+    ],
 
     legend: {
       show: true,
@@ -72,9 +93,27 @@ export default function DashboardChart({
       fontSize: "14px",
       fontWeight: "600",
     },
-  };
 
-  console.log(donutOptions);
+    dataLabels: {
+      enabled: false,
+    },
+
+    plotOptions: {
+      pie: {
+        donut: {
+          size: "70%",
+          labels: {
+            show: true,
+            total: {
+              show: true,
+              label: "Total",
+              formatter: () => total,
+            },
+          },
+        },
+      },
+    },
+  };
 
   return (
     <div className="row g-4 mb-4">
@@ -118,9 +157,7 @@ export default function DashboardChart({
             </h5>
           </div>
 
-          <div
-            className="card-body d-flex justify-content-center align-items-center"
-          >
+          <div className="card-body d-flex justify-content-center align-items-center">
             <Chart
               options={donutOptions}
               series={[

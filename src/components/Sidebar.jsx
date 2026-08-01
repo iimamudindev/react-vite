@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../services/api";
 export default function Sidebar({
   collapsed,
@@ -6,8 +6,9 @@ export default function Sidebar({
 }) {
   
   
-  
   const navigate = useNavigate();
+  const location = useLocation();
+ 
 
   const handleLogout = async () => {
     try {
@@ -24,14 +25,19 @@ export default function Sidebar({
     <div
       className="d-flex flex-column shadow-lg"
       style={{
-        width: collapsed ? "70px" : "250px",
-        minHeight: "100vh",
-        backgroundColor: "#212529",
-        color: "#fff",
-        transition: "all 0.3s ease",
-        overflow: "hidden",
-        flexShrink: 0,
-      }}
+        
+  width: collapsed ? "70px" : "250px",
+    height: "100vh",
+      position: "sticky",
+        top: 0,
+         zIndex: 1000,
+          backgroundColor: "#212529",
+            color: "#fff",
+              transition: "all 0.3s ease",
+                overflow: "hidden",
+                  flexShrink: 0,
+}}
+      
     >
       {/* Header */}
       <div className="border-bottom text-center py-4">
@@ -69,6 +75,12 @@ export default function Sidebar({
           <li className="nav-item">
             <Link
               to="/dashboard"
+              onClick={() => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "smooth",
+                });
+              }}
               className="nav-link text-white rounded px-3 py-2"
             >
               <i className="bi bi-speedometer2 me-2"></i>
@@ -76,14 +88,34 @@ export default function Sidebar({
             </Link>
           </li>
 
+          
+
           <li className="nav-item">
-            <a
-              href="#data-user"
-              className="nav-link text-white rounded px-3 py-2"
+
+        <button
+              className="nav-link text-white rounded px-3 py-2 border-0 bg-transparent w-100 text-start"
+              onClick={() => {
+                if (location.pathname !== "/dashboard") {
+                  navigate("/dashboard");
+                  setTimeout(() => {
+                    document
+                      .getElementById("data-user")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }, 300);
+                } else {
+                  document
+                    .getElementById("data-user")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
             >
               <i className="bi bi-table me-2"></i>
               {!collapsed && "Data User"}
-            </a>
+            </button>
+
+
+
+
           </li>
 
           <li className="nav-item">
@@ -95,7 +127,15 @@ export default function Sidebar({
               {!collapsed && "Ganti Password"}
             </Link>
           </li>
-
+          <li className="nav-item">
+  <Link
+    to="/activity-logs"
+    className="nav-link text-white rounded px-3 py-2"
+  >
+    <i className="bi bi-clock-history me-2"></i>
+    {!collapsed && "Activity Log"}
+  </Link>
+</li>
         </ul>
       </div>
 

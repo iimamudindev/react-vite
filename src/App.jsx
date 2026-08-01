@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 
 import ChangePassword from "./pages/ChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ActivityLogs from "./pages/ActivityLogs";
 
 export default function App() {
   return (
@@ -24,6 +25,15 @@ export default function App() {
         element={
           <ProtectedRoute>
             <ChangePassword />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/activity-logs"
+        element={
+          <ProtectedRoute>
+            <ActivityLogs />
           </ProtectedRoute>
         }
       />

@@ -271,7 +271,6 @@ export default function DashboardFinal() {
             style={{
                 display: "flex",
                 minHeight: "100vh",
-                alignItems: "stretch",
             }}
         >
             <Sidebar
@@ -373,13 +372,11 @@ export default function DashboardFinal() {
                     
 
 
-                        <div
+                    <div
                         ref={dataUserRef}
                         id="data-user"
                         className="card shadow-sm border-0 rounded-4"
-                        style={{ scrollMarginTop: "90px" }}
                     >
-                    
                         <div className="card border-0 shadow rounded-4 mb-4">
     <h5 className="mb-0 fw-bold">
       Data User

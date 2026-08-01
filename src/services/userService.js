@@ -55,7 +55,3 @@ export const changePassword = async (data) => {
 
   return res.data;
 };
-export const getActivityLogs = async () => {
-  const res = await api.get("/activity-logs");
-  return res.data;
-};

@@ -387,32 +387,49 @@ export default function POS() {
 
                         </div>
 
-                        <div className="d-flex align-items-center mt-2">
+                       <div className="d-flex align-items-center mt-2">
 
-                           <input
-                            type="text"
-                            inputMode="numeric"
-                            className="form-control form-control-lg"
-                            value={
-                              paymentMethod === "cash"
-                                ? paidAmount
-                                : grandTotal.toLocaleString("id-ID")
-                            }
-                            placeholder="Masukkan jumlah pembayaran"
-                            disabled={paymentMethod !== "cash"}
-                            onChange={(e) => {
-                              const digits = e.target.value.replace(/\D/g, "");
-
-                              if (digits === "") {
-                                setPaidAmount("");
-                                return;
+                          <div className="input-group" style={{ maxWidth: "150px" }}>
+                            <button
+                              className="btn btn-outline-secondary"
+                              type="button"
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity - 1)
                               }
+                              disabled={item.quantity <= 1}
+                            >
+                              -
+                            </button>
 
-                              setPaidAmount(
-                                Number(digits).toLocaleString("id-ID")
-                              );
-                            }}
-                          />
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              className="form-control text-center"
+                              value={item.quantity}
+                              onChange={(e) => {
+                                const digits = e.target.value.replace(/\D/g, "");
+
+                                if (digits === "") {
+                                  return;
+                                }
+
+                                updateQuantity(item.id, Number(digits));
+                              }}
+                            />
+
+                            <button
+                              className="btn btn-outline-secondary"
+                              type="button"
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity + 1)
+                              }
+                              disabled={item.quantity >= Number(item.stock)}
+                            >
+                             +
+                            </button>
+                          </div>
+
+
 
                           <span className="ms-auto fw-bold">
                             Rp{" "}
@@ -446,13 +463,25 @@ export default function POS() {
                     </label>
 
                     <input
-                      type="number"
-                      min="0"
+                      type="text"
+                      inputMode="numeric"
                       className="form-control"
-                      value={discount}
-                      onChange={(e) =>
-                        setDiscount(e.target.value)
+                      value={
+                        discount === "" || discount === 0
+                          ? ""
+                          : Number(discount).toLocaleString("id-ID")
                       }
+                      placeholder="Masukkan diskon"
+                      onChange={(e) => {
+                        const digits = e.target.value.replace(/\D/g, "");
+
+                        if (digits === "") {
+                          setDiscount("");
+                          return;
+                        }
+
+                        setDiscount(Number(digits));
+                      }}
                     />
 
                   </div>

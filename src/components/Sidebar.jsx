@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../services/api";
 export default function Sidebar({
   collapsed,
@@ -52,7 +52,7 @@ export default function Sidebar({
       </div>
 
       {/* Menu */}
-      <div className="flex-grow-1 p-3">
+            <div className="flex-grow-1 p-3">
         <ul className="nav flex-column gap-2">
           <li className="nav-item">
             <button
@@ -62,6 +62,8 @@ export default function Sidebar({
               className="nav-link text-white rounded px-3 py-2 border-0 bg-transparent w-100 text-start"
               onClick={handleLogout}
             >
+
+
               <i className="bi bi-box-arrow-right me-2"></i>
               {!collapsed && "Logout"}
             </button>
@@ -70,10 +72,8 @@ export default function Sidebar({
          
          </li>
 
-
-
           <li className="nav-item">
-            <Link
+            <NavLink
               to="/dashboard"
               onClick={() => {
                 window.scrollTo({
@@ -81,14 +81,30 @@ export default function Sidebar({
                   behavior: "smooth",
                 });
               }}
-              className="nav-link text-white rounded px-3 py-2"
+              className={({ isActive }) =>
+                `nav-link text-white rounded px-3 py-2 ${isActive ? "bg-info" : ""
+                }`
+              }
             >
               <i className="bi bi-speedometer2 me-2"></i>
               {!collapsed && "Dashboard"}
-            </Link>
+            </NavLink>
           </li>
-
-          
+      
+      
+     
+          <li className="nav-item">
+            <NavLink
+              to="/pos"
+              className={({ isActive }) =>
+                `nav-link text-white rounded px-3 py-2 ${isActive ? "bg-info" : ""
+                }`
+              }
+            >
+              <i className="bi bi-cart-check me-2"></i>
+              {!collapsed && "Kasir / POS"}
+            </NavLink>
+          </li>
 
           <li className="nav-item">
 
@@ -117,24 +133,53 @@ export default function Sidebar({
 
 
           </li>
+          <li className="nav-item">
+            <NavLink
+              to="/products"
+              className={({ isActive }) =>
+                `nav-link text-white rounded px-3 py-2 ${isActive ? "bg-info" : ""
+                }`
+              }
+            >
+              <i className="bi bi-box-seam me-2"></i>
+              {!collapsed && "Master Data Produk"}
+            </NavLink>
+          </li>
+
+        
+
+
+
+
+<li className="nav-item">
+  <NavLink
+    to="/transactions"
+    className="nav-link text-white rounded px-3 py-2"
+  >
+    <i className="bi bi-receipt me-2"></i>
+    {!collapsed && "Riwayat Transaksi"}
+  </NavLink>
+</li>
+
+
 
           <li className="nav-item">
-            <Link
+            <NavLink
               to="/change-password"
               className="nav-link text-white rounded px-3 py-2"
             >
               <i className="bi bi-key me-2"></i>
               {!collapsed && "Ganti Password"}
-            </Link>
+            </NavLink>
           </li>
           <li className="nav-item">
-  <Link
+  <NavLink
     to="/activity-logs"
     className="nav-link text-white rounded px-3 py-2"
   >
     <i className="bi bi-clock-history me-2"></i>
     {!collapsed && "Activity Log"}
-  </Link>
+  </NavLink>
 </li>
         </ul>
       </div>

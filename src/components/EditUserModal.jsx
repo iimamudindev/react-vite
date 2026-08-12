@@ -17,30 +17,52 @@ export default function EditUserModal({
 
           <div className="modal-body">
 
+            {/* Nama */}
+            <label className="form-label fw-semibold">
+              👤 Nama
+            </label>
+
             <input
               type="text"
               name="name"
-              className="form-control mb-2"
+              className="form-control mb-3"
               value={user.name || ""}
               onChange={handleChange}
             />
 
+            {/* Email */}
+            <label className="form-label fw-semibold">
+              ✉ Email
+            </label>
+
             <input
               type="email"
               name="email"
-              className="form-control mb-2"
+              className="form-control mb-3"
               value={user.email || ""}
               onChange={handleChange}
             />
 
+            {/* Password */}
+            <label className="form-label fw-semibold">
+              🔒 Password
+            </label>
+
             <input
               type="password"
               name="password"
-              className="form-control mb-2"
+              className="form-control mb-3"
               placeholder="Kosongkan jika tidak diubah"
               value={user.password || ""}
               onChange={handleChange}
             />
+
+            
+
+            {/* Role */}
+            <label className="form-label fw-semibold">
+              🛡 Role
+            </label>
 
             <select
               name="role"

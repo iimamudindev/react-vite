@@ -30,6 +30,7 @@ export default function DashboardFinal() {
     const usersPerPage = 10;
     const [newUser, setNewUser] = useState({
         name: "",
+        kategori: "",
         email: "",
         password: "",
         role: "user",
@@ -66,6 +67,8 @@ export default function DashboardFinal() {
 
     const handleUpdate = async () => {
         try {
+
+            console.log("DATA EDIT USER =", editingUser);
             await api.put(`/users/${editingUser.id}`, editingUser);
             toast.success("User berhasil diperbarui");
             setIsModalOpen(false);
@@ -156,6 +159,7 @@ export default function DashboardFinal() {
 
             setNewUser({
                 name: "",
+                kategori: "",
                 email: "",
                 password: "",
                 role: "user",

@@ -1,0 +1,619 @@
+import { useEffect, useState } from "react";
+import api from "../services/api";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
+
+export default function Transactions() {
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const dateInputToISO = (value) => {
+    if (!value || value.length !== 10) return "";
+
+  const [dd, mm, yyyy] = value.split("/");
+
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
+  const transactionsPerPage = 10;
+
+  const formatRupiah = (value) => {
+    return `Rp ${Number(value || 0).toLocaleString("id-ID")}`;
+  };
+
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "-";
+
+    return new Date(dateString).toLocaleString("id-ID", {
+      timeZone: "Asia/Jakarta",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+  };
+  const dateInputToISO = (value) => {
+    if (!value || value.length !== 10) return "";
+
+    const [dd, mm, yyyy] = value.split("/");
+
+    return `${yyyy}-${mm}-${dd}`;
+  };
+  const normalizeDateInput = (value) => {
+    const digits = value.replace(/\D/g, "").slice(0, 8);
+
+    if (digits.length <= 2) {
+      return digits;
+    }
+
+    if (digits.length <= 4) {
+      return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    }
+
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+  };
+
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleDetail = async (id) => {
+    console.log("DETAIL DIKLIK:", id);
+
+    try {
+      const res = await api.get(`/transactions/${id}`);
+
+      console.log("DETAIL RESPONSE:", res.data);
+
+      setSelectedTransaction(res.data);
+      setShowModal(true);
+    } catch (err) {
+      console.error("DETAIL ERROR:", err);
+    }
+  };
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const res = await api.get("/transactions");
+
+        console.log("TRANSACTIONS =", res.data);
+
+        setTransactions(
+          Array.isArray(res.data) ? res.data : []
+        );
+      } catch (err) {
+        console.error(
+          "Gagal mengambil transaksi:",
+          err
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  const indexOfLastTransaction =
+    currentPage * transactionsPerPage;
+
+  const filteredTransactions = transactions.filter((transaction) => {
+    const keyword = search.toLowerCase().trim();
+
+    const matchesSearch =
+      !keyword ||
+      transaction.transaction_code
+        ?.toLowerCase()
+        .includes(keyword) ||
+      transaction.cashier_name
+        ?.toLowerCase()
+        .includes(keyword);
+
+    const transactionDate = transaction.created_at
+      ? new Date(transaction.created_at)
+        .toLocaleDateString("en-CA", {
+          timeZone: "Asia/Jakarta",
+        })
+      : "";
+
+    
+    
+    const dateFromISO = dateInputToISO(dateFrom);
+    const dateToISO = dateInputToISO(dateTo);
+
+    const dateFromISO = dateInputToISO(dateFrom);
+    const dateToISO = dateInputToISO(dateTo);
+
+    const matchesDateFrom =
+      !dateFromISO || transactionDate >= dateFromISO;
+
+    const matchesDateTo =
+      !dateToISO || transactionDate <= dateToISO;
+   
+
+    return (
+      matchesSearch &&
+      matchesDateFrom &&
+      matchesDateTo
+    );
+  });
+
+
+
+  const indexOfFirstTransaction =
+    indexOfLastTransaction - transactionsPerPage;
+
+  const currentTransactions =
+    filteredTransactions.slice(
+      indexOfFirstTransaction,
+      indexOfLastTransaction
+    );
+
+  const totalPages = Math.ceil(
+    filteredTransactions.length / transactionsPerPage
+  );
+
+  return (
+    <div className="d-flex min-vh-100">
+
+      <Sidebar />
+
+      <div className="flex-grow-1">
+
+        <Navbar />
+
+        <div
+          className="container-fluid p-4"
+          style={{
+            backgroundColor: "#f4f6f9",
+            minHeight: "calc(100vh - 56px)",
+          }}
+        >
+
+          <div className="card shadow">
+
+            <div className="card-header">
+              <h4 className="mb-0">
+                <i className="bi bi-receipt me-2"></i>
+                Riwayat Transaksi
+              </h4>
+            </div>
+
+            <div className="card-body">
+              <div className="row g-2 mb-3">
+
+                <div className="col-md-5">
+                  <div className="input-group">
+                    <span className="input-group-text">
+                      <i className="bi bi-search"></i>
+                    </span>
+
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Cari kode transaksi atau kasir..."
+                      value={search}
+                      onChange={(e) => {
+                        setSearch(e.target.value);
+                        setCurrentPage(1);
+                      }}
+                    />
+                  </div>
+                </div>
+
+           
+                <div className="col-md-2">
+                  <inputconst matchesDateFrom =
+                    type="text"
+                    className="form-control"
+                    placeholder="DD/MM/YYYY"
+                    value={dateFrom}
+                    inputMode="numeric"
+                    maxLength={10}
+                    onChange={(e) => {
+                      setDateFrom(normalizeDateInput(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    title="Tanggal mulai"
+                  />
+                </div>
+                  
+
+                <div className="col-md-2">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="DD/MM/YYYY"
+                    value={dateTo}
+                    inputMode="numeric"
+                    maxLength={10}
+                    onChange={(e) => {
+                      setDateTo(normalizeDateInput(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    title="Tanggal sampai"
+                  />
+                </div>
+
+                <div className="col-md-2">
+                  <button
+                    className="btn btn-secondary w-100"
+                    onClick={() => {
+                      setSearch("");
+                      setDateFrom("");
+                      setDateTo("");
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <i className="bi bi-arrow-counterclockwise me-1"></i>
+                    Reset
+                  </button>
+                </div>
+
+              </div>
+
+              {loading ? (
+                <p>Loading...</p>
+              ) : transactions.length === 0 ? (
+                <div className="text-center text-secondary py-5">
+                  <i className="bi bi-receipt fs-1 d-block mb-3"></i>
+                  Belum ada transaksi.
+                </div>
+              ) : (
+                <>
+                  <div className="table-responsive">
+
+                    <table className="table table-striped table-hover table-bordered align-middle text-center shadow-sm mb-0">
+
+                      <thead className="table-dark">
+
+                        <tr>
+                          <th width="60">No</th>
+                          <th>Kode Transaksi</th>
+                          <th>Kasir</th>
+                          <th>Subtotal</th>
+                          <th>Diskon</th>
+                          <th>Grand Total</th>
+                          <th>Bayar</th>
+                          <th>Kembalian</th>
+                          <th>Metode</th>
+                          <th>Waktu</th>
+                          <th>Aksi</th>
+                        </tr>
+
+                      </thead>
+
+                      <tbody>
+
+                        {currentTransactions.map(
+                          (transaction, index) => (
+
+                            <tr key={transaction.id}>
+
+                              <td>
+                                {indexOfFirstTransaction +
+                                  index +
+                                  1}
+                              </td>
+
+                              <td className="fw-semibold">
+                                {transaction.transaction_code}
+                              </td>
+
+                              <td>
+                                {transaction.cashier_name}
+                              </td>
+
+                              <td>
+                                {formatRupiah(
+                                  transaction.subtotal
+                                )}
+                              </td>
+
+                              <td>
+                                {formatRupiah(
+                                  transaction.discount
+                                )}
+                              </td>
+
+                              <td className="fw-bold text-primary">
+                                {formatRupiah(
+                                  transaction.grand_total
+                                )}
+                              </td>
+
+                              <td>
+                                {formatRupiah(
+                                  transaction.paid_amount
+                                )}
+                              </td>
+
+                              <td className="text-success fw-semibold">
+                                {formatRupiah(
+                                  transaction.change_amount
+                                )}
+                              </td>
+
+                              <td>
+                                <span className="badge bg-success">
+                                  {transaction.payment_method}
+                                </span>
+                              </td>
+
+                              <td>
+                                {formatDateTime(
+                                  transaction.created_at
+                                )}
+
+
+
+
+
+                              </td>
+                              
+
+
+
+                              <td className="d-flex gap-2 justify-content-center">
+
+                                <button
+                                  className="btn btn-primary btn-sm"
+                                  onClick={() => handleDetail(transaction.id)}
+                                >
+                                  <i className="bi bi-eye"></i>
+                                </button>
+
+                                <button
+                                  className="btn btn-success btn-sm"
+                                  onClick={() =>
+                                    window.open(
+                                      `/receipt/${transaction.id}`,
+                                      "_blank"
+                                    )
+                                  }
+                                >
+                                  <i className="bi bi-printer"></i>
+                                </button>
+
+                              </td>
+                            </tr>
+
+                          )
+                        )}
+
+                      </tbody>
+
+                    </table>
+
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mt-3">
+
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      disabled={currentPage === 1}
+                      onClick={() =>
+                        setCurrentPage(
+                          currentPage - 1
+                        )
+                      }
+                    >
+                      <i className="bi bi-chevron-left me-1"></i>
+                      Prev
+                    </button>
+
+                    <span className="fw-semibold">
+                      Halaman {currentPage} dari{" "}
+                      {totalPages}
+                    </span>
+
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      disabled={
+                        currentPage === totalPages
+                      }
+                      onClick={() =>
+                        setCurrentPage(
+                          currentPage + 1
+                        )
+                      }
+                    >
+                      Next
+                      <i className="bi bi-chevron-right ms-1"></i>
+                    </button>
+
+                  </div>
+                </>
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+      {showModal && selectedTransaction && (
+        <div
+          className="modal fade show"
+          style={{
+            display: "block",
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}
+        >
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  Detail Transaksi
+                </h5>
+
+                <button
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                ></button>
+              </div>
+
+              <div className="modal-body">
+
+                <p>
+                  <strong>Kode :</strong>{" "}
+                  {selectedTransaction.transaction.transaction_code}
+                </p>
+
+                <p>
+                  <strong>Kasir :</strong>{" "}
+                  {selectedTransaction.transaction.cashier_name}
+                </p>
+
+
+                <hr />
+
+                <div className="row mb-3">
+
+                  <div className="col-md-6">
+
+                    <p className="mb-1">
+                      <strong>Tanggal :</strong>{" "}
+                      {formatDateTime(
+                        selectedTransaction?.transaction.created_at
+                      )}
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Metode Bayar :</strong>{" "}
+                      <span className="badge bg-success">
+                        {selectedTransaction?.transaction.payment_method}
+                      </span>
+                    </p>
+
+                  </div>
+
+                  <div className="col-md-6 text-end">
+
+                    <p className="mb-1">
+                      <strong>Subtotal :</strong>{" "}
+                      {formatRupiah(
+                        selectedTransaction?.transaction.subtotal
+                      )}
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Diskon :</strong>{" "}
+                      {formatRupiah(
+                        selectedTransaction?.transaction.discount
+                      )}
+                    </p>
+
+                    <h4 className="text-primary">
+                      Grand Total :{" "}
+                      {formatRupiah(
+                        selectedTransaction?.transaction.grand_total
+                      )}
+                    </h4>
+
+                    <p className="mb-1">
+                      <strong>Bayar :</strong>{" "}
+                      {formatRupiah(
+                        selectedTransaction?.transaction.paid_amount
+                      )}
+                    </p>
+
+                    <h5 className="text-success">
+                      Kembalian :{" "}
+                      {formatRupiah(
+                        selectedTransaction?.transaction.change_amount
+                      )}
+                    </h5>
+
+                  </div>
+
+                </div>
+              <table className="table table-bordered table-striped">
+                <thead className="table-dark">
+                  <tr>
+                    <th>No</th>
+                    <th>Produk</th>
+                    <th>Qty</th>
+                    <th>Satuan</th>
+                    <th>Harga</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {selectedTransaction.items.map((item, index) => (
+                    <tr key={item.id}>
+                      <td>{index + 1}</td>
+
+                      <td>{item.product_name}</td>
+
+                      <td>
+                        {parseInt(item.quantity)}
+                      </td>
+                      <td>{item.unit}</td>
+
+                      <td>
+                        Rp {Number(item.price).toLocaleString("id-ID")}
+                      </td>
+
+                      <td>
+                        Rp {Number(item.subtotal).toLocaleString("id-ID")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="mt-3 text-end">
+
+                <div>
+                  <strong>Total Item :</strong>{" "}
+                  {selectedTransaction?.items?.length}
+                </div>
+
+                <div>
+                  <strong>Total Qty :</strong>{" "}
+                  {selectedTransaction?.items?.reduce(
+                    (total, item) => total + Number(item.quantity),
+                    0
+                  )}
+                </div>
+
+              </div>
+               </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-success"
+                  onClick={() =>
+                    window.open(
+                      `/receipt/${selectedTransaction.transaction.id}`,
+                      "_blank"
+                    )
+                  }
+                >
+                  <i className="bi bi-printer me-2"></i>
+                  Print
+                </button>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowModal(false)}
+                >
+                  Tutup
+                </button>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

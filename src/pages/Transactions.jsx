@@ -404,6 +404,8 @@ export default function Transactions() {
                           <th>Subtotal</th>
                           <th>Diskon</th>
                           <th>Grand Total</th>
+                          <th>Total HPP</th>
+                          <th>Laba Kotor</th>
                           <th>Bayar</th>
                           <th>Kembalian</th>
                           <th>Metode</th>
@@ -450,6 +452,13 @@ export default function Transactions() {
                                 {formatRupiah(
                                   transaction.grand_total
                                 )}
+                              </td>
+                              <td className="text-warning fw-semibold">
+                                {formatRupiah(transaction.total_hpp)}
+                              </td>
+
+                              <td className="text-success fw-bold">
+                                {formatRupiah(transaction.gross_profit)}
                               </td>
 
                               <td>

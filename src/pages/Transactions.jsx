@@ -206,10 +206,16 @@ export default function Transactions() {
   return (
     <div className="d-flex min-vh-100">
 
+
       <Sidebar />
 
-      <div className="flex-grow-1">
-
+      <div
+        className="flex-grow-1"
+        style={{
+          minWidth: 0,
+          overflowX: "auto"
+        }}
+      >
         <Navbar />
 
         <div
@@ -393,7 +399,13 @@ export default function Transactions() {
 
                   <div className="table-responsive">
 
-                    <table className="table table-striped table-hover table-bordered align-middle text-center shadow-sm mb-0">
+                        <table
+                          className="table table-striped table-hover table-bordered align-middle text-center shadow-sm mb-0"
+                          style={{
+                            minWidth: "1100px",
+                            fontSize: "12px",
+                          }}
+                        >
 
                       <thead className="table-dark">
 
@@ -409,7 +421,7 @@ export default function Transactions() {
                           <th>Bayar</th>
                           <th>Kembalian</th>
                           <th>Metode</th>
-                          <th>Waktu</th>
+                          <th style={{ whiteSpace: "nowrap" }}>Waktu</th>
                           <th>Aksi</th>
                         </tr>
 
@@ -453,7 +465,7 @@ export default function Transactions() {
                                   transaction.grand_total
                                 )}
                               </td>
-                              <td className="text-warning fw-semibold">
+                              <td className="text-dark fw-semibold">
                                 {formatRupiah(transaction.total_hpp)}
                               </td>
 
@@ -479,10 +491,8 @@ export default function Transactions() {
                                 </span>
                               </td>
 
-                              <td>
-                                {formatDateTime(
-                                  transaction.created_at
-                                )}
+                              <td style={{ whiteSpace: "nowrap" }}>
+                                {formatDateTime(transaction.created_at)}
                               </td>
 
                               <td>

@@ -170,6 +170,20 @@ export default function Transactions() {
       0
     );
 
+  const totalFilteredHPP =
+    filteredTransactions.reduce(
+      (total, transaction) =>
+        total + Number(transaction.total_hpp || 0),
+      0
+    );
+
+  const totalFilteredGrossProfit =
+    filteredTransactions.reduce(
+      (total, transaction) =>
+        total + Number(transaction.gross_profit || 0),
+      0
+    );
+
   // =========================
   // PAGINATION
   // =========================
@@ -367,7 +381,6 @@ export default function Transactions() {
                         <div className="text-secondary">
                           Total Omzet
                         </div>
-
                         <h4 className="mb-0 fw-bold text-success">
                           {formatRupiah(totalFilteredOmzet)}
                         </h4>
@@ -376,6 +389,50 @@ export default function Transactions() {
                     </div>
                   </div>
                 </div>
+
+              <div className="col-md-6">
+                <div className="card border-0 shadow-sm">
+                  <div className="card-body d-flex align-items-center">
+
+                    <div className="bg-dark text-white rounded p-3 me-3">
+                      <i className="bi bi-box-seam fs-4"></i>
+                    </div>
+
+                    <div>
+                      <div className="text-secondary">
+                        Total HPP
+                      </div>
+
+                      <h4 className="mb-0 fw-bold">
+                        {formatRupiah(totalFilteredHPP)}
+                      </h4>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <div className="card border-0 shadow-sm">
+                  <div className="card-body d-flex align-items-center">
+
+                    <div className="bg-success text-white rounded p-3 me-3">
+                      <i className="bi bi-graph-up-arrow fs-4"></i>
+                    </div>
+
+                    <div>
+                      <div className="text-secondary">
+                        Laba Kotor
+                      </div>
+
+                      <h4 className="mb-0 fw-bold text-success">
+                        {formatRupiah(totalFilteredGrossProfit)}
+                      </h4>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
 
               </div>
 

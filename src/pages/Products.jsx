@@ -483,58 +483,60 @@ console.log("FORM PRODUCTS =", form);
                         Harga Beli
                       </label>
 
-                     <input
-                      type="text"
-                      inputMode="numeric"
-                      className="form-control"
-                      name="purchase_price"
-                      value={
-                        form.purchase_price === ""
-                          ? ""
-                          : Number(form.purchase_price).toLocaleString("id-ID", {
-                            maximumFractionDigits: 0,
-                          })
-                      }
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, "");
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        className="form-control"
+                        name="purchase_price"
+                        value={
+                          form.purchase_price === ""
+                            ? ""
+                            : Number(form.purchase_price).toLocaleString("id-ID", {
+                              maximumFractionDigits: 0,
+                            })
+                        }
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "");
 
-                        setForm((prev) => ({
-                          ...prev,
-                          purchase_price: value,
-                        }));
-                      }}
-                    />
+                          setForm((prev) => ({
+                            ...prev,
+                            purchase_price: value,
+                          }));
+                        }}
+                      />
+
+                    </div>
+
                     <div className="col-md-4">
 
                       <label className="form-label">
                         Harga Jual
                       </label>
 
-                      </div>
-                     </div>
-                      
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      className="form-control"
-                      name="selling_price"
-                      value={
-                        form.selling_price === ""
-                          ? ""
-                          : Number(form.selling_price).toLocaleString("id-ID", {
-                            maximumFractionDigits: 0,
-                          })
-                      }
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, "");
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        className="form-control"
+                        name="selling_price"
+                        value={
+                          form.selling_price === ""
+                            ? ""
+                            : Number(form.selling_price).toLocaleString("id-ID", {
+                              maximumFractionDigits: 0,
+                            })
+                        }
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "");
 
-                        setForm((prev) => ({
-                          ...prev,
-                          selling_price: value,
-                        }));
-                      }}
-                    />
-                      
+                          setForm((prev) => ({
+                            ...prev,
+                            selling_price: value,
+                          }));
+                        }}
+                      />
+
+                    </div>
+
                     <div className="col-md-4">
 
                       <label className="form-label">

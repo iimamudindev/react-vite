@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom";
 import api from "../services/api";
 import "./Receipt.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Receipt() {
   const { id } = useParams();
 
   const [transaction, setTransaction] = useState(null);
   const [items, setItems] = useState([]);
-  const printed = useRef(false);
 
   useEffect(() => {
     fetchReceipt();
@@ -25,16 +24,7 @@ export default function Receipt() {
       console.error(err);
     }
   };
-  useEffect(() => {
-    if (!transaction || printed.current) return;
 
-    printed.current = true;
-
-    setTimeout(() => {
-      window.print();
-    }, 500);
-
-  }, [transaction]);
 
   if (!transaction) {
     return (

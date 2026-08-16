@@ -479,7 +479,17 @@ export default function Transactions() {
                           <th>Kembalian</th>
                           <th>Metode</th>
                           <th style={{ whiteSpace: "nowrap" }}>Waktu</th>
-                          <th>Aksi</th>
+                              <th
+                                style={{
+                                  position: "sticky",
+                                  right: 0,
+                                  zIndex: 3,
+                                  backgroundColor: "#212529",
+                                  minWidth: "95px",
+                                }}
+                              >
+                                Aksi
+                              </th>
                         </tr>
 
                       </thead>
@@ -542,17 +552,19 @@ export default function Transactions() {
                                 )}
                               </td>
 
-                              <td>
-                                <span className="badge bg-success">
-                                  {transaction.payment_method}
-                                </span>
-                              </td>
-
                               <td style={{ whiteSpace: "nowrap" }}>
                                 {formatDateTime(transaction.created_at)}
                               </td>
 
-                              <td>
+                              <td
+                                style={{
+                                  position: "sticky",
+                                  right: 0,
+                                  zIndex: 2,
+                                  backgroundColor: "white",
+                                  minWidth: "95px",
+                                }}
+                              >
 
                                 <div className="d-flex gap-2 justify-content-center">
 

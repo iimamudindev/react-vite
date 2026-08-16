@@ -552,6 +552,12 @@ export default function Transactions() {
                                 )}
                               </td>
 
+                              <td>
+                                <span className="badge bg-success">
+                                  {transaction.payment_method}
+                                </span>
+                              </td>
+
                               <td style={{ whiteSpace: "nowrap" }}>
                                 {formatDateTime(transaction.created_at)}
                               </td>

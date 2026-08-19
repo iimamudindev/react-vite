@@ -4,9 +4,9 @@ import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 
 export default function Transactions() {
+  const [collapsed, setCollapsed] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [currentPage, setCurrentPage] = useState(1);
   const transactionsPerPage = 10;
 
@@ -221,16 +221,14 @@ export default function Transactions() {
     <div className="d-flex min-vh-100">
 
 
-      <Sidebar />
-
+      <Sidebar collapsed={collapsed} />
       <div
         className="flex-grow-1"
         style={{
           minWidth: 0,
-          overflowX: "auto"
         }}
       >
-        <Navbar />
+        <Navbar toggleSidebar={() => setCollapsed(!collapsed)} />
 
         <div
           className="container-fluid p-4"

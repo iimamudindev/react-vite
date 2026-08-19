@@ -54,23 +54,6 @@ export default function Sidebar({
       {/* Menu */}
             <div className="flex-grow-1 p-3">
         <ul className="nav flex-column gap-2">
-          <li className="nav-item">
-            <button
-              
-              
-              
-              className="nav-link text-white rounded px-3 py-2 border-0 bg-transparent w-100 text-start"
-              onClick={handleLogout}
-            >
-
-
-              <i className="bi bi-box-arrow-right me-2"></i>
-              {!collapsed && "Logout"}
-            </button>
-         
-         
-         
-         </li>
 
           <li className="nav-item">
             <NavLink

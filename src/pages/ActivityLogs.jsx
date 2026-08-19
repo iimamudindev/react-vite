@@ -151,6 +151,11 @@ const formatDateTime = (dateString) => {
                           </th>
 
                           <th>
+                            <i className="bi bi-envelope me-1"></i>
+                            Email
+                          </th>
+
+                          <th>
                             <i className="bi bi-lightning me-1"></i>
                             Action
                           </th>
@@ -178,6 +183,10 @@ const formatDateTime = (dateString) => {
 
                             <td className="fw-semibold">
                               {log.name}
+                            </td>
+
+                            <td>
+                              {log.email}
                             </td>
 
                             <td>

@@ -156,11 +156,6 @@ const formatDateTime = (dateString) => {
                           </th>
 
                           <th>
-                            <i className="bi bi-receipt me-1"></i>
-                            Transaction Code
-                          </th>
-
-                          <th>
                             <i className="bi bi-lightning me-1"></i>
                             Action
                           </th>
@@ -191,10 +186,6 @@ const formatDateTime = (dateString) => {
 
                             <td>
                               {log.email}
-                            </td>
-
-                            <td>
-                              {log.transaction_code || "-"}
                             </td>
 
                             <td>

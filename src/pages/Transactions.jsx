@@ -813,56 +813,48 @@ export default function Transactions() {
                       <th>Qty</th>
                       <th>Satuan</th>
                       <th>Harga</th>
+                      <th>HPP</th>
                       <th>Subtotal</th>
+                      <th>Laba</th>
                     </tr>
 
                   </thead>
 
                   <tbody>
+                    {selectedTransaction.items?.map((item, index) => (
+                      <tr key={item.id}>
+                        <td>{index + 1}</td>
 
-                    {selectedTransaction.items?.map(
-                      (item, index) => (
+                        <td>
+                          {item.product_name}
+                        </td>
 
-                        <tr key={item.id}>
+                        <td>
+                          {parseInt(item.quantity, 10)}
+                        </td>
 
-                          <td>
-                            {index + 1}
-                          </td>
+                        <td>
+                          {item.unit}
+                        </td>
 
-                          <td>
-                            {item.product_name}
-                          </td>
+                        <td>
+                          {formatRupiah(item.price)}
+                        </td>
 
-                          <td>
-                            {parseInt(
-                              item.quantity,
-                              10
-                            )}
-                          </td>
+                        <td>
+                          {formatRupiah(item.cost_price)}
+                        </td>
 
-                          <td>
-                            {item.unit}
-                          </td>
+                        <td>
+                          {formatRupiah(item.subtotal)}
+                        </td>
 
-                          <td>
-                            {formatRupiah(
-                              item.price
-                            )}
-                          </td>
-
-                          <td>
-                            {formatRupiah(
-                              item.subtotal
-                            )}
-                          </td>
-
-                        </tr>
-
-                      )
-                    )}
-
+                        <td>
+                          {formatRupiah(item.item_profit)}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
-
                 </table>
 
                 <div className="mt-3 text-end">

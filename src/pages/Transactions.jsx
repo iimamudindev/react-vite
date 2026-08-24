@@ -471,7 +471,7 @@ export default function Transactions() {
                           <th>Subtotal</th>
                           <th>Diskon</th>
                           <th>Grand Total</th>
-                          <th>Total HPP</th>
+                          <th>HPP</th>
                           <th>Laba Kotor</th>
                           <th>Bayar</th>
                           <th>Kembalian</th>

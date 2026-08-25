@@ -22,6 +22,11 @@ export default function DashboardFinal() {
     
     const [loading, setLoading] = useState(false);
     const [bestSellingProducts, setBestSellingProducts] = useState([]);
+    const [transactionSummary, setTransactionSummary] = useState({
+        grandTotal: 0,
+        totalHpp: 0,
+        grossProfit: 0,
+    });
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
     const [roleFilter, setRoleFilter] = useState("");
@@ -77,6 +82,34 @@ export default function DashboardFinal() {
         }
     };
     
+
+    const fetchTransactionSummary = async () => {
+        try {
+            const res = await api.get("/transactions");
+
+            if (Array.isArray(res.data)) {
+                const summary = res.data.reduce(
+                    (acc, transaction) => {
+                        acc.grandTotal += Number(transaction.grand_total || 0);
+                        acc.totalHpp += Number(transaction.total_hpp || 0);
+                        acc.grossProfit += Number(transaction.gross_profit || 0);
+
+                        return acc;
+                    },
+                    {
+                        grandTotal: 0,
+                        totalHpp: 0,
+                        grossProfit: 0,
+                    }
+                );
+
+                setTransactionSummary(summary);
+            }
+        } catch (err) {
+            console.error("TRANSACTION SUMMARY ERROR =", err);
+            toast.error("Gagal mengambil ringkasan transaksi");
+        }
+    };
 
     const handleEdit = (user) => {
         setEditingUser({ ...user });
@@ -152,10 +185,12 @@ export default function DashboardFinal() {
         
     
 
-    useEffect(() => {
-        fetchUsers();
-        fetchBestSellingProducts();
-    }, []);
+useEffect(() => {
+    fetchUsers();
+    fetchBestSellingProducts();
+    fetchTransactionSummary();
+}, []);
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -394,6 +429,86 @@ export default function DashboardFinal() {
     userCount={users.filter(u => u.role === "user").length}
     staffCount={users.filter(u => u.role === "staff").length}
 />
+
+<div className="row g-4 mb-4">
+
+    <div className="col-12 col-md-4">
+        <div className="card bg-primary text-white border-0 shadow h-100">
+            <div className="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                    <div className="fw-semibold">
+                        Grand Total
+                    </div>
+
+                    <h3 className="fw-bold mt-2 mb-0">
+                        Rp{" "}
+                        {transactionSummary.grandTotal.toLocaleString("id-ID")}
+                    </h3>
+                </div>
+
+                <i
+                    className="bi bi-cash-stack"
+                    style={{
+                        fontSize: "3rem",
+                        opacity: 0.25,
+                    }}
+                ></i>
+            </div>
+        </div>
+    </div>
+
+    <div className="col-12 col-md-4">
+        <div className="card bg-dark text-white border-0 shadow h-100">
+            <div className="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                    <div className="fw-semibold">
+                        HPP
+                    </div>
+
+                    <h3 className="fw-bold mt-2 mb-0">
+                        Rp{" "}
+                        {transactionSummary.totalHpp.toLocaleString("id-ID")}
+                    </h3>
+                </div>
+
+                <i
+                    className="bi bi-box-seam"
+                    style={{
+                        fontSize: "3rem",
+                        opacity: 0.25,
+                    }}
+                ></i>
+            </div>
+        </div>
+    </div>
+
+    <div className="col-12 col-md-4">
+        <div className="card bg-success text-white border-0 shadow h-100">
+            <div className="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                    <div className="fw-semibold">
+                        Laba
+                    </div>
+
+                    <h3 className="fw-bold mt-2 mb-0">
+                        Rp{" "}
+                        {transactionSummary.grossProfit.toLocaleString("id-ID")}
+                    </h3>
+                </div>
+
+                <i
+                    className="bi bi-graph-up-arrow"
+                    style={{
+                        fontSize: "3rem",
+                        opacity: 0.25,
+                    }}
+                ></i>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 
                     <div className="card border-0 shadow rounded-4 mb-4 mt-4">
                         <div className="card-header bg-success text-white">

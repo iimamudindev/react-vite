@@ -398,7 +398,7 @@ export default function Transactions() {
 
                     <div>
                       <div className="text-secondary">
-                        Total HPP
+                        HPP
                       </div>
 
                       <h4 className="mb-0 fw-bold">

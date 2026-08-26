@@ -85,26 +85,13 @@ export default function DashboardFinal() {
 
     const fetchTransactionSummary = async () => {
         try {
-            const res = await api.get("/transactions");
+            const res = await api.get("/dashboard/summary");
 
-            if (Array.isArray(res.data)) {
-                const summary = res.data.reduce(
-                    (acc, transaction) => {
-                        acc.grandTotal += Number(transaction.grand_total || 0);
-                        acc.totalHpp += Number(transaction.total_hpp || 0);
-                        acc.grossProfit += Number(transaction.gross_profit || 0);
-
-                        return acc;
-                    },
-                    {
-                        grandTotal: 0,
-                        totalHpp: 0,
-                        grossProfit: 0,
-                    }
-                );
-
-                setTransactionSummary(summary);
-            }
+            setTransactionSummary({
+                grandTotal: Number(res.data.total_omzet || 0),
+                totalHpp: Number(res.data.total_hpp || 0),
+                grossProfit: Number(res.data.gross_profit || 0),
+            });
         } catch (err) {
             console.error("TRANSACTION SUMMARY ERROR =", err);
             toast.error("Gagal mengambil ringkasan transaksi");

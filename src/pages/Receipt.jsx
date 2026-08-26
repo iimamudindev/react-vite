@@ -15,14 +15,26 @@ export default function Receipt() {
     fetchReceipt();
   }, []);
 
+
   useEffect(() => {
     if (!transaction || !autoPrint) return;
+
+    const handleAfterPrint = () => {
+      setTimeout(() => {
+        window.close();
+      }, 300);
+    };
+
+    window.addEventListener("afterprint", handleAfterPrint);
 
     const timer = setTimeout(() => {
       window.print();
     }, 5000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("afterprint", handleAfterPrint);
+    };
   }, [transaction, autoPrint]);
 
   const fetchReceipt = async () => {

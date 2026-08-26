@@ -79,7 +79,7 @@ body{
     .receipt{
         width:58mm;
         margin:0;
-        padding:4mm;
+        padding:3mm;
         box-shadow:none;
         font-size:10px;
     }
@@ -88,8 +88,9 @@ body{
         display:none;
     }
 
-    @page{
-        size:58mm auto;
-        margin:2mm;
+@page {
+        size: 58mm auto;
+        margin: 0;
+
     }
 }

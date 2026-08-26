@@ -177,7 +177,7 @@ export default function POS() {
         payload
       );
 
-      const receiptUrl = `/receipt/${res.data.transactionId}`;
+      const receiptUrl = `/receipt/${res.data.transactionId}?autoprint=1`;
 
       setCart([]);
       setDiscount(0);

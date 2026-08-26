@@ -1,10 +1,12 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import api from "../services/api";
 import "./Receipt.css";
 import { useEffect, useState } from "react";
 
 export default function Receipt() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const autoPrint = searchParams.get("autoprint") === "1";
 
   const [transaction, setTransaction] = useState(null);
   const [items, setItems] = useState([]);
@@ -12,6 +14,16 @@ export default function Receipt() {
   useEffect(() => {
     fetchReceipt();
   }, []);
+
+  useEffect(() => {
+    if (!transaction || !autoPrint) return;
+
+    const timer = setTimeout(() => {
+      window.print();
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [transaction, autoPrint]);
 
   const fetchReceipt = async () => {
     try {

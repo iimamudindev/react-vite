@@ -22,6 +22,7 @@ export default function DashboardFinal() {
     
     const [loading, setLoading] = useState(false);
     const [bestSellingProducts, setBestSellingProducts] = useState([]);
+    const [period, setPeriod] = useState("all");
     const [transactionSummary, setTransactionSummary] = useState({
         grandTotal: 0,
         totalHpp: 0,
@@ -65,7 +66,9 @@ export default function DashboardFinal() {
         console.log("🔥 FETCH BEST SELLING DIPANGGIL");
 
         try {
-            const res = await api.get("/products/best-selling");
+            const res = await api.get(
+                `/products/best-selling?period=${period}`
+            );
 
             console.log("🔥 BEST SELLING RESPONSE =", res.data);
 
@@ -81,11 +84,15 @@ export default function DashboardFinal() {
             toast.error("Gagal mengambil data barang terlaris");
         }
     };
-    
 
     const fetchTransactionSummary = async () => {
+        console.log("💰 FETCH SUMMARY DIPANGGIL, PERIOD =", period);
         try {
-            const res = await api.get("/dashboard/summary");
+            const res = await api.get(
+                `/dashboard/summary?period=${period}`
+            );
+
+            console.log("💰 SUMMARY RESPONSE =", res.data);
 
             setTransactionSummary({
                 grandTotal: Number(res.data.total_omzet || 0),
@@ -172,11 +179,14 @@ export default function DashboardFinal() {
         
     
 
-useEffect(() => {
-    fetchUsers();
-    fetchBestSellingProducts();
-    fetchTransactionSummary();
-}, []);
+    useEffect(() => {
+        fetchUsers();
+    }, []);
+
+    useEffect(() => {
+        fetchBestSellingProducts();
+        fetchTransactionSummary();
+    }, [period]);
 
 
     const handleInputChange = (e) => {
@@ -416,8 +426,24 @@ useEffect(() => {
     userCount={users.filter(u => u.role === "user").length}
     staffCount={users.filter(u => u.role === "staff").length}
 />
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <h5 className="fw-bold mb-0">
+                            Ringkasan Penjualan
+                        </h5>
 
-<div className="row g-4 mb-4">
+                        <select
+                            className="form-select"
+                            value={period}
+                            onChange={(e) => setPeriod(e.target.value)}
+                            style={{ maxWidth: "220px" }}
+                        >
+                            <option value="all">Semua</option>
+                            <option value="today">Hari Ini</option>
+                            <option value="week">Minggu Ini</option>
+                            <option value="month">Bulan Ini</option>
+                        </select>
+                    </div>
+                    <div className="row g-4 mb-4">
 
     <div className="col-12 col-md-4">
         <div className="card bg-primary text-white border-0 shadow h-100">

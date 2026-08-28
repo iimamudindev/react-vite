@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import DashboardChart from "../components/DashboardChart";
+import SalesChart from "../components/SalesChart";
 import api from "../services/api";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -22,6 +23,7 @@ export default function DashboardFinal() {
     
     const [loading, setLoading] = useState(false);
     const [bestSellingProducts, setBestSellingProducts] = useState([]);
+    const [salesChartData, setSalesChartData] = useState([]);
     const [period, setPeriod] = useState("all");
     const [transactionSummary, setTransactionSummary] = useState({
         grandTotal: 0,
@@ -104,7 +106,25 @@ export default function DashboardFinal() {
             toast.error("Gagal mengambil ringkasan transaksi");
         }
     };
+    const fetchSalesChart = async () => {
+        console.log("📈 FETCH SALES CHART DIPANGGIL, PERIOD =", period);
 
+        try {
+            const res = await api.get(
+                `/dashboard/sales-chart?period=${period}`
+            );
+
+            console.log("📈 SALES CHART RESPONSE =", res.data);
+
+            setSalesChartData(
+                Array.isArray(res.data) ? res.data : []
+            );
+        } catch (err) {
+            console.error("📈 SALES CHART ERROR =", err);
+            toast.error("Gagal mengambil data grafik penjualan");
+            setSalesChartData([]);
+        }
+    };
     const handleEdit = (user) => {
         setEditingUser({ ...user });
         setIsModalOpen(true);
@@ -186,6 +206,7 @@ export default function DashboardFinal() {
     useEffect(() => {
         fetchBestSellingProducts();
         fetchTransactionSummary();
+        fetchSalesChart();
     }, [period]);
 
 
@@ -403,8 +424,9 @@ export default function DashboardFinal() {
                         </div>
                     </div>
                    
-                    <div className="card border-0 shadow rounded-4 mb-4">
-                        <div className="card-header bg-primary text-white">
+                    <SalesChart data={salesChartData} />
+                    <div className="card border-0 shadow rounded-4 mb-4 mt-4">
+                    <div className="card-header bg-primary text-white">
                             <h5 className="mb-0">
                            <i className="bi bi-person-plus-fill me-2"></i>
                                Tambah User
@@ -419,7 +441,6 @@ export default function DashboardFinal() {
                             />
                         </div>
                     </div>
-                    <div style={{ border: "3px solid red" }}> </div>
 <StatsCards
     users={users}
     adminCount={users.filter(u => u.role === "admin").length}

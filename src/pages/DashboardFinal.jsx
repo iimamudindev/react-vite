@@ -25,6 +25,9 @@ export default function DashboardFinal() {
     const [bestSellingProducts, setBestSellingProducts] = useState([]);
     const [salesChartData, setSalesChartData] = useState([]);
     const [period, setPeriod] = useState("all");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
+
     const [transactionSummary, setTransactionSummary] = useState({
         grandTotal: 0,
         totalHpp: 0,
@@ -47,6 +50,40 @@ export default function DashboardFinal() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
+    const [dateFromInput, setDateFromInput] = useState("");
+    const [dateToInput, setDateToInput] = useState("");
+
+    const convertIndonesiaToApiDate = (value) => {
+        const parts = value.split("/");
+
+        if (parts.length !== 3) {
+            return "";
+        }
+
+        const [day, month, year] = parts;
+
+        if (
+            day.length !== 2 ||
+            month.length !== 2 ||
+            year.length !== 4
+        ) {
+            return "";
+        }
+
+        return `${year}-${month}-${day}`;
+    };
+
+    const getPeriodQuery = () => {
+        if (period === "custom") {
+            if (!dateFrom || !dateTo) {
+                return null;
+            }
+
+            return `period=custom&date_from=${dateFrom}&date_to=${dateTo}`;
+        }
+
+        return `period=${period}`;
+    };
     const fetchUsers = async () => {
         try {
             const res = await api.get("/users");
@@ -68,8 +105,12 @@ export default function DashboardFinal() {
         console.log("🔥 FETCH BEST SELLING DIPANGGIL");
 
         try {
+            const periodQuery = getPeriodQuery();
+
+            if (!periodQuery) return;
+
             const res = await api.get(
-                `/products/best-selling?period=${period}`
+                `/products/best-selling?${periodQuery}`
             );
 
             console.log("🔥 BEST SELLING RESPONSE =", res.data);
@@ -90,8 +131,12 @@ export default function DashboardFinal() {
     const fetchTransactionSummary = async () => {
         console.log("💰 FETCH SUMMARY DIPANGGIL, PERIOD =", period);
         try {
+            const periodQuery = getPeriodQuery();
+
+            if (!periodQuery) return;
+
             const res = await api.get(
-                `/dashboard/summary?period=${period}`
+                `/dashboard/summary?${periodQuery}`
             );
 
             console.log("💰 SUMMARY RESPONSE =", res.data);
@@ -110,8 +155,12 @@ export default function DashboardFinal() {
         console.log("📈 FETCH SALES CHART DIPANGGIL, PERIOD =", period);
 
         try {
+            const periodQuery = getPeriodQuery();
+
+            if (!periodQuery) return;
+
             const res = await api.get(
-                `/dashboard/sales-chart?period=${period}`
+                `/dashboard/sales-chart?${periodQuery}`
             );
 
             console.log("📈 SALES CHART RESPONSE =", res.data);
@@ -204,10 +253,14 @@ export default function DashboardFinal() {
     }, []);
 
     useEffect(() => {
+        if (period === "custom" && (!dateFrom || !dateTo)) {
+            return;
+        }
+
         fetchBestSellingProducts();
         fetchTransactionSummary();
         fetchSalesChart();
-    }, [period]);
+    }, [period, dateFrom, dateTo]);
 
 
     const handleInputChange = (e) => {
@@ -462,7 +515,73 @@ export default function DashboardFinal() {
                             <option value="today">Hari Ini</option>
                             <option value="week">Minggu Ini</option>
                             <option value="month">Bulan Ini</option>
+                            <option value="custom">Custom</option>
                         </select>
+                        {period === "custom" && (
+                            <>
+                                <input
+                                    type="text"
+                                    className="form-control ms-2"
+                                    placeholder="DD/MM/YYYY"
+                                    value={dateFromInput}
+                                    onChange={(e) => {
+                                        const value = e.target.value
+                                            .replace(/\D/g, "")
+                                            .slice(0, 8);
+
+                                        let formatted = value;
+
+                                        if (value.length > 4) {
+                                            formatted =
+                                                value.slice(0, 2) +
+                                                "/" +
+                                                value.slice(2, 4) +
+                                                "/" +
+                                                value.slice(4);
+                                        } else if (value.length > 2) {
+                                            formatted =
+                                                value.slice(0, 2) +
+                                                "/" +
+                                                value.slice(2);
+                                        }
+
+                                        setDateFromInput(formatted);
+                                        setDateFrom(convertIndonesiaToApiDate(formatted));
+                                    }}
+                                />
+
+                                <input
+                                    type="text"
+                                    className="form-control ms-2"
+                                    placeholder="DD/MM/YYYY"
+                                    value={dateToInput}
+                                    onChange={(e) => {
+                                        const value = e.target.value
+                                            .replace(/\D/g, "")
+                                            .slice(0, 8);
+
+                                        let formatted = value;
+
+                                        if (value.length > 4) {
+                                            formatted =
+                                                value.slice(0, 2) +
+                                                "/" +
+                                                value.slice(2, 4) +
+                                                "/" +
+                                                value.slice(4);
+                                        } else if (value.length > 2) {
+                                            formatted =
+                                                value.slice(0, 2) +
+                                                "/" +
+                                                value.slice(2);
+                                        }
+
+                                        setDateToInput(formatted);
+                                        setDateTo(convertIndonesiaToApiDate(formatted));
+                                    }}
+                                />
+                            </>
+                        )}
                     </div>
                     <div className="row g-4 mb-4">
 

@@ -4,11 +4,11 @@ export default function Sidebar({
   collapsed,
   dataUserRef,
 }) {
-  
-  
+
+
   const navigate = useNavigate();
   const location = useLocation();
- 
+
 
   const handleLogout = async () => {
     try {
@@ -19,13 +19,13 @@ export default function Sidebar({
       navigate("/");
     }
   };
-  
-  
+
+
   return (
     <div
       className="d-flex flex-column shadow-lg"
       style={{
-        
+
   width: collapsed ? "70px" : "250px",
     height: "100vh",
       position: "sticky",
@@ -37,7 +37,7 @@ export default function Sidebar({
                 overflow: "hidden",
                   flexShrink: 0,
 }}
-      
+
     >
       {/* Header */}
       <div className="border-bottom text-center py-4">
@@ -73,9 +73,9 @@ export default function Sidebar({
               {!collapsed && "Dashboard"}
             </NavLink>
           </li>
-      
-      
-     
+
+
+
           <li className="nav-item">
             <NavLink
               to="/pos"
@@ -129,7 +129,7 @@ export default function Sidebar({
             </NavLink>
           </li>
 
-        
+
 
 
 
@@ -143,6 +143,19 @@ export default function Sidebar({
     {!collapsed && "Riwayat Transaksi"}
   </NavLink>
 </li>
+
+          <li className="nav-item">
+            <NavLink
+              to="/reports"
+              className={({ isActive }) =>
+                `nav-link text-white rounded px-3 py-2 ${isActive ? "bg-info" : ""
+                }`
+              }
+            >
+              <i className="bi bi-bar-chart-line me-2"></i>
+              {!collapsed && "Laporan Penjualan"}
+            </NavLink>
+          </li>
 
 
 

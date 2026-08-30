@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -21,7 +20,16 @@ export default function Login() {
         password,
       });
 
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem(
+        "token",
+        response.data.token
+      );
+
+      localStorage.setItem(
+        "refreshToken",
+        response.data.refreshToken
+      );
+
       localStorage.setItem(
         "user",
         JSON.stringify(response.data.user)
@@ -35,7 +43,6 @@ export default function Login() {
       setLoading(false);
     }
   };
-
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">

@@ -8,7 +8,7 @@ import ActivityLogs from "./pages/ActivityLogs";
 import POS from "./pages/POS";
 import Transactions from "./pages/Transactions";
 import Products from "./pages/Products";
-
+import Reports from "./pages/Reports";
 
 export default function App() {
   return (
@@ -80,7 +80,14 @@ export default function App() {
   }
 />
 
-
+<Route
+  path="/reports"
+  element={
+    <ProtectedRoute>
+      <Reports />
+    </ProtectedRoute>
+  }
+/>
 
 
     </Routes>

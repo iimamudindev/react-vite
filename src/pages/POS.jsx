@@ -507,6 +507,7 @@ export default function POS() {
                       className="form-control form-control-lg"
                       value={paidAmount}
                       placeholder="Masukkan jumlah pembayaran"
+                      disabled={paymentMethod !== "cash"}
                       onChange={(e) => {
                         const digits = e.target.value.replace(/\D/g, "");
 

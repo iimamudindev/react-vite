@@ -23,6 +23,7 @@ export default function DashboardFinal() {
     
     const [loading, setLoading] = useState(false);
     const [bestSellingProducts, setBestSellingProducts] = useState([]);
+    const [lowStockProducts, setLowStockProducts] = useState([]);
     const [salesChartData, setSalesChartData] = useState([]);
     const [period, setPeriod] = useState("all");
     const [dateFrom, setDateFrom] = useState("");
@@ -99,7 +100,21 @@ export default function DashboardFinal() {
         }
     };
 
-        
+    const fetchLowStockProducts = async () => {
+        try {
+            const res = await api.get("/products/low-stock?threshold=5");
+
+            if (Array.isArray(res.data?.data)) {
+                setLowStockProducts(res.data.data);
+            } else {
+                setLowStockProducts([]);
+            }
+        } catch (err) {
+            console.error("LOW STOCK ERROR =", err);
+            toast.error("Gagal mengambil data stok menipis");
+            setLowStockProducts([]);
+        }
+    };
 
     const fetchBestSellingProducts = async () => {
         console.log("🔥 FETCH BEST SELLING DIPANGGIL");
@@ -248,8 +263,10 @@ export default function DashboardFinal() {
         
     
 
+
     useEffect(() => {
         fetchUsers();
+        fetchLowStockProducts();
     }, []);
 
     useEffect(() => {
@@ -748,6 +765,93 @@ export default function DashboardFinal() {
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* LOW STOCK PRODUCTS */}
+                <div className="card border-0 shadow rounded-4 mb-4">
+                    <div className="card-header bg-warning">
+                        <h5 className="mb-0 fw-bold">
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            Stok Menipis
+                        </h5>
+                    </div>
+
+                    <div className="card-body p-0">
+                        <div className="table-responsive">
+                            <table className="table table-hover align-middle mb-0">
+                                <thead className="table-light">
+                                    <tr>
+                                        <th className="text-center">No</th>
+                                        <th>Produk</th>
+                                        <th>Stok</th>
+                                        <th>Satuan</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {lowStockProducts.length > 0 ? (
+                                        lowStockProducts.map((product, index) => (
+                                            <tr key={product.id}>
+                                                <td className="text-center fw-bold">
+                                                    {index + 1}
+                                                </td>
+
+                                                <td>
+                                                    <div className="fw-semibold">
+                                                        {product.name}
+                                                    </div>
+                                                    <small className="text-muted">
+                                                        {product.code}
+                                                    </small>
+                                                </td>
+
+                                                <td
+                                                    className={
+                                                        Number(product.stock) <= 0
+                                                            ? "fw-bold text-danger"
+                                                            : "fw-bold text-warning"
+                                                    }
+                                                >
+                                                    {Number(product.stock).toLocaleString(
+                                                        "id-ID",
+                                                        {
+                                                            minimumFractionDigits: 0,
+                                                            maximumFractionDigits: 3,
+                                                        }
+                                                    )}
+                                                </td>
+
+                                                <td>{product.unit}</td>
+
+                                                <td>
+                                                    {Number(product.stock) <= 0 ? (
+                                                        <span className="badge bg-danger">
+                                                            Habis
+                                                        </span>
+                                                    ) : (
+                                                        <span className="badge bg-warning text-dark">
+                                                            Stok Menipis
+                                                        </span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td
+                                                colSpan="5"
+                                                className="text-center text-muted py-4"
+                                            >
+                                                <i className="bi bi-check-circle-fill text-success me-2"></i>
+                                                Semua stok masih aman.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 

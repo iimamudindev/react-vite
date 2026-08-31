@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import * as XLSX from "xlsx";
+
 const formatRupiah = (value) => {
 
     return Number(value || 0).toLocaleString("id-ID");
@@ -63,7 +65,43 @@ export default function Reports() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const exportToExcel = () => {
+    if (!report.data || report.data.length === 0) {
+        alert("Tidak ada data untuk diekspor.");
+        return;
+    }
 
+    const exportData = report.data.map((item, index) => ({
+        No: index + 1,
+        Tanggal: new Date(item.created_at).toLocaleString(
+            "id-ID",
+            {
+                timeZone: "Asia/Jakarta",
+            }
+        ),
+        "Kode Transaksi": item.transaction_code,
+        Kasir: item.cashier_name,
+        Pembayaran: item.payment_method,
+        Omzet: Number(item.grand_total || 0),
+        HPP: Number(item.total_hpp || 0),
+        Laba: Number(item.gross_profit || 0),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Laporan Penjualan"
+    );
+
+    XLSX.writeFile(
+        workbook,
+        "laporan-penjualan.xlsx"
+    );
+};
     const fetchCashiers = async () => {
         try {
             const res = await api.get("/users");
@@ -168,14 +206,27 @@ export default function Reports() {
                 }}
             >
 
-            <div className="mb-4">
-                <h3 className="fw-bold mb-1">
-                    Laporan Penjualan
-                </h3>
-                <p className="text-muted mb-0">
-                    Laporan transaksi, omzet, HPP, dan laba kotor
-                </p>
-            </div>
+             <div className="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 className="fw-bold mb-1">
+            Laporan Penjualan
+        </h3>
+
+        <p className="text-muted mb-0">
+            Laporan transaksi, omzet, HPP, dan laba kotor
+        </p>
+    </div>
+
+    <button
+        type="button"
+        className="btn btn-success"
+        onClick={exportToExcel}
+        disabled={!report.data || report.data.length === 0}
+    >
+        <i className="bi bi-file-earmark-excel me-2"></i>
+        Export Excel
+    </button>
+</div>
 
             <div className="card border-0 shadow-sm rounded-4 mb-4">
                 <div className="card-body">

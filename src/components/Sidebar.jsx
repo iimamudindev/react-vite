@@ -44,7 +44,7 @@ export default function Sidebar({
         {!collapsed ? (
           <>
             <h5 className="fw-bold mb-0">USER</h5>
-            <small className="text-secondary">Management</small>
+            <small className="text-secondary">Menu Utama</small>
           </>
         ) : (
           <h4 className="fw-bold mb-0">UM</h4>

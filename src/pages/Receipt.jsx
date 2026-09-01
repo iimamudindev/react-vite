@@ -68,7 +68,7 @@ export default function Receipt() {
           </div>
 
           <div className="receipt-subtitle">
-            User Management POS
+            Sistem Kasir & Manajemen Toko
           </div>
 
           </div>

@@ -451,7 +451,7 @@ export default function DashboardFinal() {
                         </h2>
 
                         <p className="text-muted mb-0">
-                            User Management System
+                            Sistem Kasir & Manajemen Toko
                         </p>
                     </div>
 

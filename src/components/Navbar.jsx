@@ -30,7 +30,7 @@ export default function Navbar({ toggleSidebar }) {
         </h5>
 
         <small className="text-muted">
-          User Management System
+          Sistem Kasir & Manajemen Toko
         </small>
       </div>
 

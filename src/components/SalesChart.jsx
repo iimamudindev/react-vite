@@ -2,7 +2,13 @@ import Chart from "react-apexcharts";
 
 export default function SalesChart({ data = [] }) {
 const categories = data.map((item) => {
-  const [year, month, day] = item.date.split("-");
+  const date = String(item.date || "").slice(0, 10);
+  const [year, month, day] = date.split("-");
+
+  if (!year || !month || !day) {
+    return date;
+  }
+
   return `${day}/${month}/${year}`;
 });
 

@@ -71,8 +71,36 @@ export default function DashboardFinal() {
             return "";
         }
 
+        const dayNumber = Number(day);
+        const monthNumber = Number(month);
+        const yearNumber = Number(year);
+
+        if (
+            monthNumber < 1 ||
+            monthNumber > 12 ||
+            dayNumber < 1
+        ) {
+            return "";
+        }
+
+        const date = new Date(
+            yearNumber,
+            monthNumber - 1,
+            dayNumber
+        );
+
+        if (
+            date.getFullYear() !== yearNumber ||
+            date.getMonth() !== monthNumber - 1 ||
+            date.getDate() !== dayNumber
+        ) {
+            return "";
+        }
+
         return `${year}-${month}-${day}`;
     };
+
+
 
     const getPeriodQuery = () => {
         if (period === "custom") {

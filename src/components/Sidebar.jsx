@@ -43,11 +43,11 @@ export default function Sidebar({
       <div className="border-bottom text-center py-4">
         {!collapsed ? (
           <>
-            <h5 className="fw-bold mb-0">USER</h5>
+            <h5 className="fw-bold mb-0">Sistem Kasir</h5>
             <small className="text-secondary">Menu Utama</small>
           </>
         ) : (
-          <h4 className="fw-bold mb-0">UM</h4>
+          <h4 className="fw-bold mb-0">SK</h4>
         )}
       </div>
 
@@ -137,7 +137,9 @@ export default function Sidebar({
 <li className="nav-item">
   <NavLink
     to="/transactions"
-    className="nav-link text-white rounded px-3 py-2"
+    className={({ isActive }) =>
+      `nav-link text-white rounded px-3 py-2 ${isActive ? "bg-info" : ""}`
+    }
   >
     <i className="bi bi-receipt me-2"></i>
     {!collapsed && "Riwayat Transaksi"}

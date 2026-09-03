@@ -594,7 +594,12 @@ export default function DashboardFinal() {
                                         }
 
                                         setDateFromInput(formatted);
-                                        setDateFrom(convertIndonesiaToApiDate(formatted));
+                                        const apiDate = convertIndonesiaToApiDate(formatted);
+
+                                        console.log("📅 DATE FROM INPUT =", formatted);
+                                        console.log("📅 DATE FROM API =", apiDate);
+
+                                        setDateFrom(apiDate);
                                     }}
                                 />
 
@@ -625,7 +630,14 @@ export default function DashboardFinal() {
                                         }
 
                                         setDateToInput(formatted);
-                                        setDateTo(convertIndonesiaToApiDate(formatted));
+
+                                        const apiDate = convertIndonesiaToApiDate(formatted);
+
+                                        console.log("📅 DATE TO INPUT =", formatted);
+                                        console.log("📅 DATE TO API =", apiDate);
+
+                                        setDateTo(apiDate);
+                                       
                                     }}
                                 />
                             </>

@@ -739,13 +739,13 @@ export default function DashboardFinal() {
                                     onChange={(e) => setSortBy(e.target.value)}
                                 >
                                     <option value="quantity">Qty Terjual</option>
+                                    <option value="omzet">Omzet</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* LOW STOCK PRODUCTS */}  <option value="omzet">Omzet</option>
 
                 {/* LOW STOCK PRODUCTS */}
                 <div className="card border-0 shadow rounded-4 mb-4">

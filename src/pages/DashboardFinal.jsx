@@ -743,6 +743,85 @@ export default function DashboardFinal() {
                                 </select>
                             </div>
                         </div>
+
+                        <div className="card-body p-0">
+                            <div className="table-responsive">
+                                <table className="table table-hover align-middle mb-0">
+                                    <thead className="table-light">
+                                        <tr>
+                                            <th className="text-center">No</th>
+                                            <th>Produk</th>
+                                            <th>Qty Terjual</th>
+                                            <th>Omzet</th>
+                                            <th>HPP</th>
+                                            <th>Laba</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {bestSellingProducts.length > 0 ? (
+                                            bestSellingProducts.map((product, index) => (
+                                                <tr key={product.product_id}>
+                                                    <td className="text-center fw-bold">
+                                                        {index + 1}
+                                                    </td>
+
+                                                    <td>
+                                                        <div className="fw-semibold">
+                                                            {product.product_name}
+                                                        </div>
+                                                        <small className="text-muted">
+                                                            {product.code}
+                                                        </small>
+                                                    </td>
+
+                                                    <td>
+                                                        {Number(product.total_quantity).toLocaleString(
+                                                            "id-ID",
+                                                            {
+                                                                minimumFractionDigits: 0,
+                                                                maximumFractionDigits: 3,
+                                                            }
+                                                        )}{" "}
+                                                        {product.unit}
+                                                    </td>
+
+                                                    <td>
+                                                        Rp{" "}
+                                                        {Number(product.total_sales).toLocaleString(
+                                                            "id-ID"
+                                                        )}
+                                                    </td>
+
+                                                    <td>
+                                                        Rp{" "}
+                                                        {Number(product.total_hpp).toLocaleString(
+                                                            "id-ID"
+                                                        )}
+                                                    </td>
+
+                                                    <td className="fw-bold text-success">
+                                                        Rp{" "}
+                                                        {Number(product.gross_profit).toLocaleString(
+                                                            "id-ID"
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td
+                                                    colSpan="6"
+                                                    className="text-center text-muted py-4"
+                                                >
+                                                    Belum ada data penjualan.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

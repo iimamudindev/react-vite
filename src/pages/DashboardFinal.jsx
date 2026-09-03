@@ -26,6 +26,7 @@ export default function DashboardFinal() {
     const [lowStockProducts, setLowStockProducts] = useState([]);
     const [salesChartData, setSalesChartData] = useState([]);
     const [period, setPeriod] = useState("all");
+    const [sortBy, setSortBy] = useState("quantity");
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
 
@@ -152,8 +153,10 @@ export default function DashboardFinal() {
 
             if (!periodQuery) return;
 
+            const separator = periodQuery ? "&" : "";
+
             const res = await api.get(
-                `/products/best-selling?${periodQuery}`
+                `/products/best-selling?${periodQuery}${separator}sort_by=${sortBy}`
             );
 
             console.log("🔥 BEST SELLING RESPONSE =", res.data);
@@ -305,7 +308,7 @@ export default function DashboardFinal() {
         fetchBestSellingProducts();
         fetchTransactionSummary();
         fetchSalesChart();
-    }, [period, dateFrom, dateTo]);
+    }, [period, dateFrom, dateTo, sortBy]);
 
 
     const handleInputChange = (e) => {
@@ -709,93 +712,40 @@ export default function DashboardFinal() {
 
 
                     <div className="card border-0 shadow rounded-4 mb-4 mt-4">
-                        <div className="card-header bg-success text-white">
+                        <div className="card-header bg-success text-white d-flex justify-content-between align-items-center">
                             <h5 className="mb-0 fw-bold">
                                 <i className="bi bi-trophy-fill me-2"></i>
                                 Barang Terlaris
                             </h5>
-                        </div>
 
-                        <div className="card-body p-0">
-                            <div className="table-responsive">
-                                <table className="table table-hover align-middle mb-0">
-                                    <thead className="table-light">
-                                        <tr>
-                                            <th className="text-center">No</th>
-                                            <th>Produk</th>
-                                            <th>Qty Terjual</th>
-                                            <th>Omzet</th>
-                                            <th>HPP</th>
-                                            <th>Laba</th>
-                                        </tr>
-                                    </thead>
+                            <div className="d-flex gap-2">
+                                <select
+                                    className="form-select form-select-sm"
+                                    style={{ width: "140px" }}
+                                    value={period}
+                                    onChange={(e) => setPeriod(e.target.value)}
+                                >
+                                    <option value="all">Semua</option>
+                                    <option value="today">Hari Ini</option>
+                                    <option value="week">Minggu</option>
+                                    <option value="month">Bulan</option>
+                                    <option value="custom">Custom</option>
+                                </select>
 
-                                    <tbody>
-                                        {bestSellingProducts.length > 0 ? (
-                                            bestSellingProducts.map((product, index) => (
-                                                <tr key={product.product_id}>
-                                                    <td className="text-center fw-bold">
-                                                        {index + 1}
-                                                    </td>
-
-                                                    <td>
-                                                        <div className="fw-semibold">
-                                                            {product.product_name}
-                                                        </div>
-                                                        <small className="text-muted">
-                                                            {product.code}
-                                                        </small>
-                                                    </td>
-
-                                                    <td>
-                                                        {Number(product.total_quantity).toLocaleString(
-                                                            "id-ID",
-                                                            {
-                                                                minimumFractionDigits: 0,
-                                                                maximumFractionDigits: 3,
-                                                            }
-                                                        )}{" "}
-                                                        {product.unit}
-                                                    </td>
-
-                                                    <td>
-                                                        Rp{" "}
-                                                        {Number(product.total_sales).toLocaleString(
-                                                            "id-ID"
-                                                        )}
-                                                    </td>
-
-                                                    <td>
-                                                        Rp{" "}
-                                                        {Number(product.total_hpp).toLocaleString(
-                                                            "id-ID"
-                                                        )}
-                                                    </td>
-
-                                                    <td className="fw-bold text-success">
-                                                        Rp{" "}
-                                                        {Number(product.gross_profit).toLocaleString(
-                                                            "id-ID"
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td
-                                                    colSpan="6"
-                                                    className="text-center text-muted py-4"
-                                                >
-                                                    Belum ada data penjualan.
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                                <select
+                                    className="form-select form-select-sm"
+                                    style={{ width: "140px" }}
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                >
+                                    <option value="quantity">Qty Terjual</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {/* LOW STOCK PRODUCTS */}  <option value="omzet">Omzet</option>
 
                 {/* LOW STOCK PRODUCTS */}
                 <div className="card border-0 shadow rounded-4 mb-4">

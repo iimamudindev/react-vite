@@ -9,7 +9,6 @@ export default function POS() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
 
-  const [discount, setDiscount] = useState(0);
   const [paidAmount, setPaidAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
 
@@ -57,64 +56,95 @@ export default function POS() {
 
   // ==================== CART ====================
 
-  const addToCart = (product) => {
-    setCart((currentCart) => {
-      const existing = currentCart.find(
-        (item) => item.id === product.id
-      );
+const addToCart = (product) => {
+  setCart((currentCart) => {
+    const existing = currentCart.find(
+      (item) => item.id === product.id
+    );
 
-      if (existing) {
-        if (existing.quantity >= Number(product.stock)) {
-          return currentCart;
-        }
-
-        return currentCart.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-                subtotal:
-                  (item.quantity + 1) *
-                  Number(item.selling_price),
-              }
-            : item
-        );
+    if (existing) {
+      if (existing.quantity >= Number(product.stock)) {
+        return currentCart;
       }
 
-      return [
-        ...currentCart,
-        {
-          ...product,
-          quantity: 1,
-          subtotal: Number(product.selling_price),
-        },
-      ];
-    });
-  };
+      const newQuantity = existing.quantity + 1;
 
+      return currentCart.map((item) =>
+        item.id === product.id
+          ? {
+              ...item,
+              quantity: newQuantity,
+              subtotal:
+                newQuantity * Number(item.selling_price),
+            }
+          : item
+      );
+    }
+
+    return [
+      ...currentCart,
+      {
+        ...product,
+        quantity: 1,
+        discount: 0,
+        subtotal: Number(product.selling_price),
+      },
+    ];
+  });
+};
+
+const updateItemDiscount = (productId, discount) => {
+  setCart((currentCart) =>
+    currentCart.map((item) => {
+      if (item.id !== productId) {
+        return item;
+      }
+
+      const itemSubtotal =
+        item.quantity * Number(item.selling_price);
+
+      const newDiscount = Math.min(
+        Math.max(Number(discount) || 0, 0),
+        itemSubtotal
+      );
+
+      return {
+        ...item,
+        discount: newDiscount,
+      };
+    })
+  );
+};
   const updateQuantity = (productId, quantity) => {
     setCart((currentCart) =>
-      currentCart
-        .map((item) => {
-          if (item.id !== productId) {
-            return item;
-          }
+      currentCart.map((item) => {
+        if (item.id !== productId) {
+          return item;
+        }
 
-          const maxStock = Number(item.stock);
-          const newQuantity = Math.min(
-            Math.max(Number(quantity), 1),
-            maxStock
-          );
+        const newQuantity = Math.min(
+          Math.max(Number(quantity) || 1, 1),
+          Number(item.stock)
+        );
 
-          return {
-            ...item,
-            quantity: newQuantity,
-            subtotal:
-              newQuantity * Number(item.selling_price),
-          };
-        })
+        const itemSubtotal =
+          newQuantity * Number(item.selling_price);
+
+        const newDiscount = Math.min(
+          Number(item.discount) || 0,
+          itemSubtotal
+        );
+
+        return {
+          ...item,
+          quantity: newQuantity,
+          discount: newDiscount,
+          subtotal: itemSubtotal,
+        };
+      })
     );
   };
+
 
   const removeFromCart = (productId) => {
     setCart((currentCart) =>
@@ -129,8 +159,8 @@ export default function POS() {
     0
   );
 
-  const discountAmount = Math.max(
-    Number(discount) || 0,
+  const discountAmount = cart.reduce(
+    (total, item) => total + (Number(item.discount) || 0),
     0
   );
 
@@ -166,6 +196,7 @@ export default function POS() {
         items: cart.map((item) => ({
           product_id: item.id,
           quantity: item.quantity,
+          discount: Number(item.discount) || 0,
         })),
         discount: discountAmount,
         paid_amount: paid,
@@ -180,7 +211,6 @@ export default function POS() {
       const receiptUrl = `/receipt/${res.data.transactionId}?autoprint=1`;
 
       setCart([]);
-      setDiscount(0);
       setPaidAmount("");
       setPaymentMethod("cash");
 
@@ -425,11 +455,30 @@ export default function POS() {
                               }
                               disabled={item.quantity >= Number(item.stock)}
                             >
-                             +
+                              +
                             </button>
                           </div>
 
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            className="form-control ms-2"
+                            style={{ maxWidth: "130px" }}
+                            value={
+                              item.discount === 0
+                                ? ""
+                                : Number(item.discount).toLocaleString("id-ID")
+                            }
+                            placeholder="Diskon"
+                            onChange={(e) => {
+                              const digits = e.target.value.replace(/\D/g, "");
 
+                              updateItemDiscount(
+                                item.id,
+                                digits === "" ? 0 : Number(digits)
+                              );
+                            }}
+                          />
 
                           <span className="ms-auto fw-bold">
                             Rp{" "}
@@ -456,35 +505,6 @@ export default function POS() {
                     </strong>
                   </div>
 
-                  <div className="mt-3">
-
-                    <label className="form-label">
-                      Diskon
-                    </label>
-
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      className="form-control"
-                      value={
-                        discount === "" || discount === 0
-                          ? ""
-                          : Number(discount).toLocaleString("id-ID")
-                      }
-                      placeholder="Masukkan diskon"
-                      onChange={(e) => {
-                        const digits = e.target.value.replace(/\D/g, "");
-
-                        if (digits === "") {
-                          setDiscount("");
-                          return;
-                        }
-
-                        setDiscount(Number(digits));
-                      }}
-                    />
-
-                  </div>
 
                   <div className="d-flex justify-content-between mt-3 fs-5">
                     <strong>Grand Total</strong>

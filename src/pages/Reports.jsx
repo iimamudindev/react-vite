@@ -56,6 +56,8 @@ export default function Reports() {
     const [report, setReport] = useState({
         summary: {
             total_transactions: 0,
+            total_subtotal: 0,
+            total_discount: 0,
             total_omzet: 0,
             total_hpp: 0,
             gross_profit: 0,
@@ -82,6 +84,8 @@ export default function Reports() {
         "Kode Transaksi": item.transaction_code,
         Kasir: item.cashier_name,
         Pembayaran: item.payment_method,
+        Subtotal: Number(item.subtotal || 0),
+        Diskon: Number(item.discount || 0),
         Omzet: Number(item.grand_total || 0),
         HPP: Number(item.total_hpp || 0),
         Laba: Number(item.gross_profit || 0),
@@ -356,7 +360,7 @@ export default function Reports() {
             )}
 
             <div className="row g-4 mb-4">
-                <div className="col-12 col-md-3">
+                <div className="col-12 col-md-4">
                     <div className="card bg-primary text-white border-0 shadow rounded-4 h-100">
                         <div className="card-body">
                             <div className="fw-semibold">
@@ -372,7 +376,41 @@ export default function Reports() {
                     </div>
                 </div>
 
-                <div className="col-12 col-md-3">
+                <div className="col-12 col-md-4">
+                    <div className="card bg-secondary text-white border-0 shadow rounded-4 h-100">
+                        <div className="card-body">
+                            <div className="fw-semibold">
+                                Subtotal
+                            </div>
+
+                            <h3 className="fw-bold mt-2 mb-0">
+                                Rp{" "}
+                                {formatRupiah(
+                                    report.summary?.total_subtotal
+                                )}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-12 col-md-4">
+                    <div className="card bg-danger text-white border-0 shadow rounded-4 h-100">
+                        <div className="card-body">
+                            <div className="fw-semibold">
+                                Diskon
+                            </div>
+
+                            <h3 className="fw-bold mt-2 mb-0">
+                                Rp{" "}
+                                {formatRupiah(
+                                    report.summary?.total_discount
+                                )}
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-12 col-md-4">
                     <div className="card bg-success text-white border-0 shadow rounded-4 h-100">
                         <div className="card-body">
                             <div className="fw-semibold">
@@ -389,7 +427,7 @@ export default function Reports() {
                     </div>
                 </div>
 
-                <div className="col-12 col-md-3">
+                <div className="col-12 col-md-4">
                     <div className="card bg-dark text-white border-0 shadow rounded-4 h-100">
                         <div className="card-body">
                             <div className="fw-semibold">
@@ -406,7 +444,7 @@ export default function Reports() {
                     </div>
                 </div>
 
-                <div className="col-12 col-md-3">
+                <div className="col-12 col-md-4">
                     <div className="card bg-warning border-0 shadow rounded-4 h-100">
                         <div className="card-body">
                             <div className="fw-semibold">
@@ -442,6 +480,12 @@ export default function Reports() {
                                     <th>Kasir</th>
                                     <th>Metode</th>
                                     <th className="text-end">
+                                        Subtotal
+                                    </th>
+                                    <th className="text-end">
+                                        Diskon
+                                    </th>
+                                    <th className="text-end">
                                         Omzet
                                     </th>
                                     <th className="text-end">
@@ -457,7 +501,7 @@ export default function Reports() {
                                 {report.data.length === 0 ? (
                                     <tr>
                                         <td
-                                            colSpan="8"
+                                            colSpan="10"
                                             className="text-center text-muted py-4"
                                         >
                                             Tidak ada data
@@ -490,6 +534,20 @@ export default function Reports() {
 
                                             <td>
                                                 {item.payment_method}
+                                            </td>
+
+                                            <td className="text-end">
+                                                Rp{" "}
+                                                {formatRupiah(
+                                                    item.subtotal
+                                                )}
+                                            </td>
+
+                                            <td className="text-end">
+                                                Rp{" "}
+                                                {formatRupiah(
+                                                    item.discount
+                                                )}
                                             </td>
 
                                             <td className="text-end">

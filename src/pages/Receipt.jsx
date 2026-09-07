@@ -111,19 +111,38 @@ export default function Receipt() {
           </thead>
 
           <tbody>
-            {items.map((item) => (
-              <tr key={item.id}>
-                <td>{item.product_name}</td>
+            {items.map((item) => {
+              const subtotal = Number(item.subtotal) || 0;
+              const discount = Number(item.discount) || 0;
+              const netTotal = subtotal - discount;
 
-                <td align="center">
-                  {Number(item.quantity)}
-                </td>
+              return (
+                <tr key={item.id}>
+                  <td>
+                    {item.product_name}
+                    <br />
+                    {Number(item.quantity)} x{" "}
+                    {Number(item.price).toLocaleString("id-ID")}
 
-                <td align="right">
-                  {Number(item.subtotal).toLocaleString("id-ID")}
-                </td>
-              </tr>
-            ))}
+                    {discount > 0 && (
+                      <>
+                        <br />
+                        <span style={{ fontSize: "12px" }}>
+                          Diskon: -Rp{" "}
+                          {discount.toLocaleString("id-ID")}
+                        </span>
+                      </>
+                    )}
+                  </td>
+
+                  <td></td>
+
+                  <td align="right">
+                    {netTotal.toLocaleString("id-ID")}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 

@@ -40,6 +40,35 @@ body{
     padding:2px 0;
 }
 
+.receipt th:nth-child(1),
+.receipt td:nth-child(1){
+    width:55%;
+    text-align:left;
+    overflow-wrap:anywhere;
+}
+
+.receipt th:nth-child(2),
+.receipt td:nth-child(2){
+    width:15%;
+    text-align:center;
+    white-space:nowrap;
+}
+
+.receipt th:nth-child(3),
+.receipt td:nth-child(3){
+    width:30%;
+    text-align:right;
+    white-space:nowrap;
+}
+
+.item-price{
+    font-size:10px;
+}
+
+.item-discount{
+    font-size:10px;
+}
+
 .text-right{
     text-align:right;
 }

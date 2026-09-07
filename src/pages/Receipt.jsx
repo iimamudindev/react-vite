@@ -121,23 +121,24 @@ export default function Receipt() {
                   <td>
                     {item.product_name}
                     <br />
-                    {Number(item.quantity)} x{" "}
-                    {Number(item.price).toLocaleString("id-ID")}
-
+                    <span className="item-price">
+                      Rp {Number(item.price).toLocaleString("id-ID")}
+                    </span>
                     {discount > 0 && (
                       <>
                         <br />
-                        <span style={{ fontSize: "12px" }}>
-                          Diskon: -Rp{" "}
-                          {discount.toLocaleString("id-ID")}
+                        <span className="item-discount">
+                          Diskon: -Rp {discount.toLocaleString("id-ID")}
                         </span>
                       </>
                     )}
                   </td>
 
-                  <td></td>
+                  <td align="center" className="item-qty">
+                    {Number(item.quantity)}
+                  </td>
 
-                  <td align="right">
+                  <td align="right" className="item-total">
                     {netTotal.toLocaleString("id-ID")}
                   </td>
                 </tr>

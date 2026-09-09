@@ -49,10 +49,19 @@ const categories = data.map((item) => {
 
     xaxis: {
       categories,
+      labels: {
+        rotate: -45,
+        rotateAlways: true,
+        hideOverlappingLabels: false,
+        showDuplicates: true,
+        trim: false,
+      },
+      tickPlacement: "on",
       title: {
         text: "Tanggal",
       },
     },
+
 
     yaxis: {
       labels: {

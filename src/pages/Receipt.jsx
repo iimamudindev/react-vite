@@ -208,12 +208,6 @@ export default function Receipt() {
           tidak dapat dikembalikan
         </div>
 
-        <button
-          className="btn btn-dark print-btn"
-          onClick={() => window.print()}
-        >
-          Print
-        </button>
       </div>
     </div>
   );

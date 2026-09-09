@@ -8,7 +8,7 @@ export default function Sidebar({
 
   const navigate = useNavigate();
   const location = useLocation();
-
+  const isReceiptPage = location.pathname.startsWith("/receipt/");
 
   const handleLogout = async () => {
     try {
@@ -158,6 +158,18 @@ export default function Sidebar({
               {!collapsed && "Laporan Penjualan"}
             </NavLink>
           </li>
+
+          {isReceiptPage && (
+  <li className="nav-item">
+    <button
+      className="nav-link text-white rounded px-3 py-2 border-0 bg-transparent w-100 text-start"
+      onClick={() => window.print()}
+    >
+      <i className="bi bi-file-earmark-pdf me-2"></i>
+      {!collapsed && "Simpan PDF"}
+    </button>
+  </li>
+)}
 
 
 

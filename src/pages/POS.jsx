@@ -216,12 +216,16 @@ const updateItemDiscount = (productId, discount) => {
 
       await fetchProducts();
 
-      window.open(
-        receiptUrl,
-        "_blank",
-        "width=420,height=800"
-      );
+const receiptWindow = window.open(
+  receiptUrl,
+  "_blank",
+  `width=${screen.availWidth},height=${screen.availHeight},left=0,top=0`
+);
 
+if (receiptWindow) {
+  receiptWindow.moveTo(0, 0);
+  receiptWindow.resizeTo(screen.availWidth, screen.availHeight);
+}
       
 
     } catch (err) {
@@ -555,10 +559,13 @@ const updateItemDiscount = (productId, discount) => {
                         setPaymentMethod(e.target.value)
                       }
                     >
-                      <option value="cash">Cash</option>
-                      <option value="debit">Debit</option>
-                      <option value="qris">QRIS</option>
-                      <option value="transfer">Transfer</option>
+
+                    <option value="cash">Cash</option>
+                    <option value="debit">Debit</option>
+                    <option value="credit_card">Credit Card</option>
+                    <option value="qris">QRIS</option>
+                    <option value="transfer">Transfer</option>
+
                     </select>
                   </div>
 

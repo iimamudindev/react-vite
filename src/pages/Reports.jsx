@@ -186,6 +186,7 @@ export default function Reports() {
                     ? res.data.data
                     : [],
             });
+            setCurrentPage(1);
         } catch (err) {
             console.error("SALES REPORT ERROR =", err);
 

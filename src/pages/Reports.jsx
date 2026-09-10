@@ -67,6 +67,18 @@ export default function Reports() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+    const totalPages = Math.ceil(report.data.length / itemsPerPage);
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    const currentData = report.data.slice(
+        indexOfFirstItem,
+        indexOfLastItem
+    );
+
     const exportToExcel = () => {
     if (!report.data || report.data.length === 0) {
         alert("Tidak ada data untuk diekspor.");
@@ -508,9 +520,9 @@ export default function Reports() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    report.data.map((item, index) => (
+                                    currentData.map((item, index) => (
                                         <tr key={item.id}>
-                                            <td>{index + 1}</td>
+                                            <td>{indexOfFirstItem + index + 1}</td>
 
                                             <td>
                                                 {new Date(
@@ -575,6 +587,51 @@ export default function Reports() {
                                 )}
                             </tbody>
                         </table>
+
+                        {totalPages > 1 && (
+                            <div className="d-flex justify-content-between align-items-center mt-3">
+                                <button
+                                    className="btn btn-outline-secondary"
+                                    disabled={currentPage === 1}
+                                    onClick={() =>
+                                        setCurrentPage((page) => page - 1)
+                                    }
+                                >
+                                    ← Sebelumnya
+                                </button>
+
+                                <div className="d-flex gap-1">
+                                    {Array.from(
+                                        { length: totalPages },
+                                        (_, index) => index + 1
+                                    ).map((page) => (
+                                        <button
+                                            key={page}
+                                            className={`btn ${
+                                                currentPage === page
+                                                    ? "btn-primary"
+                                                    : "btn-outline-primary"
+                                            }`}
+                                            onClick={() =>
+                                                setCurrentPage(page)
+                                            }
+                                        >
+                                            {page}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    className="btn btn-outline-secondary"
+                                    disabled={currentPage === totalPages}
+                                    onClick={() =>
+                                        setCurrentPage((page) => page + 1)
+                                    }
+                                >
+                                    Berikutnya →
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

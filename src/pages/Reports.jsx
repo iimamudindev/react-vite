@@ -311,6 +311,9 @@ export default function Reports() {
                                 <option value="debit">
                                     Debit
                                 </option>
+                               <option value="credit_card">
+                                    Credit Card
+                               </option>
                                 <option value="qris">
                                     QRIS
                                 </option>

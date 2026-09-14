@@ -100,12 +100,9 @@ const updateItemDiscount = (productId, discount) => {
         return item;
       }
 
-      const itemSubtotal =
-        item.quantity * Number(item.selling_price);
-
       const newDiscount = Math.min(
         Math.max(Number(discount) || 0, 0),
-        itemSubtotal
+        Number(item.selling_price)
       );
 
       return {
@@ -132,7 +129,7 @@ const updateItemDiscount = (productId, discount) => {
 
         const newDiscount = Math.min(
           Number(item.discount) || 0,
-          itemSubtotal
+          Number(item.selling_price)
         );
 
         return {
@@ -160,7 +157,8 @@ const updateItemDiscount = (productId, discount) => {
   );
 
   const discountAmount = cart.reduce(
-    (total, item) => total + (Number(item.discount) || 0),
+    (total, item) =>
+      total + (Number(item.discount) || 0) * Number(item.quantity),
     0
   );
 
@@ -196,7 +194,8 @@ const updateItemDiscount = (productId, discount) => {
         items: cart.map((item) => ({
           product_id: item.id,
           quantity: item.quantity,
-          discount: Number(item.discount) || 0,
+          discount:
+            (Number(item.discount) || 0) * Number(item.quantity),
         })),
         discount: discountAmount,
         paid_amount: paid,

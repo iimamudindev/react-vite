@@ -353,17 +353,28 @@ export default function Reports() {
                         </div>
 
                         <div className="col-12 col-md-2 d-flex align-items-end">
-                            <button
-                                type="button"
-                                className="btn btn-primary w-100"
-                                onClick={fetchReport}
-                                disabled={loading}
-                            >
-                                <i className="bi bi-search me-2"></i>
-                                {loading
-                                    ? "Memuat..."
-                                    : "Tampilkan"}
-                            </button>
+                            <div className="d-flex gap-2 flex-wrap w-100">
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    onClick={fetchReport}
+                                    disabled={loading}
+                                >
+                                    <i className="bi bi-search me-2"></i>
+                                    {loading ? "Memuat..." : "Tampilkan"}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-primary"
+                                    onClick={fetchReport}
+                                    disabled={loading}
+                                    title="Refresh laporan"
+                                >
+                                    <i className="bi bi-arrow-clockwise me-1"></i>
+                                    Refresh
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

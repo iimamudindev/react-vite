@@ -215,16 +215,24 @@ const updateItemDiscount = (productId, discount) => {
 
       await fetchProducts();
 
+const popupWidth = 500;
+const popupHeight = 700;
+
+const left = Math.max(
+  0,
+  (window.screen.availWidth - popupWidth) / 2
+);
+
+const top = Math.max(
+  0,
+  (window.screen.availHeight - popupHeight) / 2
+);
+
 const receiptWindow = window.open(
   receiptUrl,
   "_blank",
-  `width=${screen.availWidth},height=${screen.availHeight},left=0,top=0`
+  `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`
 );
-
-if (receiptWindow) {
-  receiptWindow.moveTo(0, 0);
-  receiptWindow.resizeTo(screen.availWidth, screen.availHeight);
-}
       
 
     } catch (err) {

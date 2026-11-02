@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -615,45 +615,70 @@ export default function Transactions() {
                   </div>
 
                   {/* PAGINATION */}
-
-                  <div className="d-flex justify-content-between align-items-center mt-3">
-
+                  <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
                     <button
-                      className="btn btn-secondary btn-sm"
-                      disabled={currentPage === 1}
+                      type="button"
+                      className="btn btn-outline-secondary btn-sm"
+                      disabled={currentPage <= 1}
                       onClick={() =>
-                        setCurrentPage(
-                          Math.max(1, currentPage - 1)
-                        )
+                        setCurrentPage((page) => Math.max(1, page - 1))
                       }
                     >
                       <i className="bi bi-chevron-left me-1"></i>
-                      Prev
+                      Sebelumnya
                     </button>
 
-                    <span className="fw-semibold">
-                      Halaman {currentPage} dari{" "}
-                      {safeTotalPages}
-                    </span>
+                    <div className="d-flex gap-1 flex-wrap justify-content-center">
+                      {Array.from(
+                        new Set([
+                          1,
+                          ...Array.from(
+                            { length: safeTotalPages },
+                            (_, index) => index + 1
+                          ).filter(
+                            (page) =>
+                              page >= currentPage - 2 &&
+                              page <= currentPage + 2
+                          ),
+                          safeTotalPages,
+                        ])
+                      )
+                        .filter((page) => page >= 1 && page <= safeTotalPages)
+                        .sort((a, b) => a - b)
+                        .map((page, index, pages) => (
+                          <React.Fragment key={page}>
+                            {index > 0 && page - pages[index - 1] > 1 && (
+                              <span className="px-1 align-self-center">…</span>
+                            )}
+
+                            <button
+                              type="button"
+                              className={`btn btn-sm ${
+                                currentPage === page
+                                  ? "btn-primary"
+                                  : "btn-outline-primary"
+                              }`}
+                              onClick={() => setCurrentPage(page)}
+                            >
+                              {page}
+                            </button>
+                          </React.Fragment>
+                        ))}
+                    </div>
 
                     <button
-                      className="btn btn-secondary btn-sm"
-                      disabled={
-                        currentPage === safeTotalPages
-                      }
+                      type="button"
+                      className="btn btn-outline-secondary btn-sm"
+                      disabled={currentPage >= safeTotalPages}
                       onClick={() =>
-                        setCurrentPage(
-                          Math.min(
-                            safeTotalPages,
-                            currentPage + 1
-                          )
+                        setCurrentPage((page) =>
+                          Math.min(safeTotalPages, page + 1)
                         )
                       }
                     >
-                      Next
+                      Berikutnya
                       <i className="bi bi-chevron-right ms-1"></i>
                     </button>
-
                   </div>
 
                 </>

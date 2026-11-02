@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
@@ -390,14 +390,9 @@ export default function Reports() {
                 <div className="col-12 col-md-4">
                     <div className="card bg-primary text-white border-0 shadow rounded-4 h-100">
                         <div className="card-body">
-                            <div className="fw-semibold">
-                                Transaksi
-                            </div>
-
-                            <h3 className="fw-bold mt-2 mb-0">
-                                {Number(
-                                    report.summary?.total_transactions || 0
-                                ).toLocaleString("id-ID")}
+                            <div className="fw-semibold">Transaksi</div>
+                            <h3 className="fw-bold mt-2 mb-0 text-nowrap">
+                                {Number(report.summary?.total_transactions || 0).toLocaleString("id-ID")}
                             </h3>
                         </div>
                     </div>
@@ -406,15 +401,11 @@ export default function Reports() {
                 <div className="col-12 col-md-4">
                     <div className="card bg-secondary text-white border-0 shadow rounded-4 h-100">
                         <div className="card-body">
-                            <div className="fw-semibold">
-                                Subtotal
-                            </div>
+                            <div className="fw-semibold">Subtotal</div>
+                            <h3 className="fw-bold mt-2 mb-0 text-nowrap">
+                             {"Rp " + formatRupiah(report.summary?.total_subtotal)}
 
-                            <h3 className="fw-bold mt-2 mb-0">
-                                Rp{" "}
-                                {formatRupiah(
-                                    report.summary?.total_subtotal
-                                )}
+
                             </h3>
                         </div>
                     </div>
@@ -423,15 +414,11 @@ export default function Reports() {
                 <div className="col-12 col-md-4">
                     <div className="card bg-danger text-white border-0 shadow rounded-4 h-100">
                         <div className="card-body">
-                            <div className="fw-semibold">
-                                Diskon
-                            </div>
+                            <div className="fw-semibold">Diskon</div>
+                            <h3 className="fw-bold mt-2 mb-0 text-nowrap">
+                             {"Rp " + formatRupiah(report.summary?.total_discount)}
 
-                            <h3 className="fw-bold mt-2 mb-0">
-                                Rp{" "}
-                                {formatRupiah(
-                                    report.summary?.total_discount
-                                )}
+
                             </h3>
                         </div>
                     </div>
@@ -440,15 +427,10 @@ export default function Reports() {
                 <div className="col-12 col-md-4">
                     <div className="card bg-success text-white border-0 shadow rounded-4 h-100">
                         <div className="card-body">
-                            <div className="fw-semibold">
-                                Omzet
-                            </div>
+                            <div className="fw-semibold">Omzet</div>
+                            <h3 className="fw-bold mt-2 mb-0 text-nowrap">
+{"Rp " + formatRupiah(report.summary?.total_omzet)}
 
-                            <h3 className="fw-bold mt-2 mb-0">
-                                Rp{" "}
-                                {formatRupiah(
-                                    report.summary?.total_omzet
-                                )}
                             </h3>
                         </div>
                     </div>
@@ -457,15 +439,10 @@ export default function Reports() {
                 <div className="col-12 col-md-4">
                     <div className="card bg-dark text-white border-0 shadow rounded-4 h-100">
                         <div className="card-body">
-                            <div className="fw-semibold">
-                                HPP
-                            </div>
+                            <div className="fw-semibold">HPP</div>
+                            <h3 className="fw-bold mt-2 mb-0 text-nowrap">
 
-                            <h3 className="fw-bold mt-2 mb-0">
-                                Rp{" "}
-                                {formatRupiah(
-                                    report.summary?.total_hpp
-                                )}
+{"Rp " + formatRupiah(report.summary?.total_hpp)}
                             </h3>
                         </div>
                     </div>
@@ -474,15 +451,10 @@ export default function Reports() {
                 <div className="col-12 col-md-4">
                     <div className="card bg-warning border-0 shadow rounded-4 h-100">
                         <div className="card-body">
-                            <div className="fw-semibold">
-                                Laba Kotor
-                            </div>
+                            <div className="fw-semibold">Laba Kotor</div>
+                            <h3 className="fw-bold mt-2 mb-0 text-nowrap">
+                                {"Rp " + formatRupiah(report.summary?.gross_profit)}
 
-                            <h3 className="fw-bold mt-2 mb-0">
-                                Rp{" "}
-                                {formatRupiah(
-                                    report.summary?.gross_profit
-                                )}
                             </h3>
                         </div>
                     </div>
@@ -491,14 +463,20 @@ export default function Reports() {
 
             <div className="card border-0 shadow rounded-4">
                 <div className="card-header bg-primary text-white">
-                    <h5 className="mb-0 fw-bold">
-                        Detail Penjualan
-                    </h5>
+                       <h5 className="mb-0 fw-bold">
+    Detail Penjualan
+</h5>
                 </div>
 
                 <div className="card-body p-0">
                     <div className="table-responsive">
-                        <table className="table table-hover align-middle mb-0">
+
+
+                                         <table className="table table-hover align-middle mb-0"
+                                             style={{ fontSize: "12px" }}
+                                         >
+
+
                             <thead className="table-light">
                                 <tr>
                                     <th>No</th>
@@ -562,29 +540,29 @@ export default function Reports() {
                                             <td>
                                                 {item.payment_method}
                                             </td>
+                                            <td className="text-end text-nowrap">
 
-                                            <td className="text-end">
                                                 Rp{" "}
                                                 {formatRupiah(
                                                     item.subtotal
                                                 )}
                                             </td>
 
-                                            <td className="text-end">
+                                            <td className="text-end text-nowrap">
                                                 Rp{" "}
                                                 {formatRupiah(
                                                     item.discount
                                                 )}
                                             </td>
 
-                                            <td className="text-end">
+                                            <td className="text-end text-nowrap">
                                                 Rp{" "}
                                                 {formatRupiah(
                                                     item.grand_total
                                                 )}
                                             </td>
 
-                                            <td className="text-end">
+                                            <td className="text-end text-nowrap">
                                                 Rp{" "}
                                                 {formatRupiah(
                                                     item.total_hpp
@@ -615,26 +593,42 @@ export default function Reports() {
                                     ← Sebelumnya
                                 </button>
 
-                                <div className="d-flex gap-1">
-                                    {Array.from(
-                                        { length: totalPages },
-                                        (_, index) => index + 1
-                                    ).map((page) => (
-                                        <button
-                                            key={page}
-                                            className={`btn ${
-                                                currentPage === page
-                                                    ? "btn-primary"
-                                                    : "btn-outline-primary"
-                                            }`}
-                                            onClick={() =>
-                                                setCurrentPage(page)
-                                            }
-                                        >
-                                            {page}
-                                        </button>
-                                    ))}
-                                </div>
+<div className="d-flex gap-1 flex-wrap justify-content-center">
+    {Array.from(
+        new Set([
+            1,
+            ...Array.from(
+                { length: totalPages },
+                (_, index) => index + 1
+            ).filter(
+                (page) =>
+                    page >= currentPage - 2 &&
+                    page <= currentPage + 2
+            ),
+            totalPages,
+        ])
+    )
+        .filter((page) => page >= 1 && page <= totalPages)
+        .sort((a, b) => a - b)
+        .map((page, index, pages) => (
+            <React.Fragment key={page}>
+                {index > 0 && page - pages[index - 1] > 1 && (
+                    <span className="px-1 align-self-center">…</span>
+                )}
+                <button
+                    type="button"
+                    className={`btn ${
+                        currentPage === page
+                            ? "btn-primary"
+                            : "btn-outline-primary"
+                    }`}
+                    onClick={() => setCurrentPage(page)}
+                >
+                    {page}
+                </button>
+            </React.Fragment>
+        ))}
+</div>
 
                                 <button
                                     className="btn btn-outline-secondary"

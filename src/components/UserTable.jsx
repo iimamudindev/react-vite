@@ -56,7 +56,10 @@ export default function UserTable({
 
   
   return (
-    <div className="table-responsive">
+    <div
+      className="table-responsive"
+      style={{ minHeight: "520px" }}
+    >
 
       <table className="table table-striped table-hover table-bordered align-middle text-center shadow-sm mb-0">
       

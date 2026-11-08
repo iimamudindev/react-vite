@@ -443,6 +443,18 @@ export default function DashboardFinal() {
     const totalPages = Math.ceil(
         sortedUsers.length / usersPerPage
     );
+
+    const safeTotalPages = Math.max(totalPages, 1);
+
+    useEffect(() => {
+        setCurrentPage((page) =>
+            Math.min(Math.max(page, 1), safeTotalPages)
+        );
+    }, [safeTotalPages]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [search, roleFilter]);
    
 
     
@@ -993,30 +1005,39 @@ export default function DashboardFinal() {
                                         className="page-link"
                                         onClick={() => setCurrentPage((p) => p - 1)}
                                     >
-                                        Previous
+                                       sebelum
                                     </button>
                                 </li>
 
-                                {[...Array(totalPages)].map((_, index) => (
-                                    <li
-                                        key={index}
-                                        className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
-                                    >
-                                        <button
-                                            className="page-link"
-                                            onClick={() => setCurrentPage(index + 1)}
+                                {Array.from(
+                                    { length: safeTotalPages },
+                                    (_, index) => index + 1
+                                )
+                                    .filter(
+                                        (page) =>
+                                            page >= currentPage - 2 &&
+                                            page <= currentPage + 2
+                                    )
+                                    .map((page) => (
+                                        <li
+                                            key={page}
+                                            className={`page-item ${currentPage === page ? "active" : ""}`}
                                         >
-                                            {index + 1}
-                                        </button>
-                                    </li>
-                                ))}
+                                            <button
+                                                className="page-link"
+                                                onClick={() => setCurrentPage(page)}
+                                            >
+                                                {page}
+                                            </button>
+                                        </li>
+                                    ))}
 
-                                <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                                <li className={`page-item ${currentPage >= safeTotalPages ? "disabled" : ""}`}>
                                     <button
                                         className="page-link"
-                                        onClick={() => setCurrentPage((p) => p + 1)}
+                                        onClick={() => setCurrentPage((p) => Math.min(safeTotalPages, p + 1))}
                                     >
-                                        Next
+                                        berikutnya
                                     </button>
                                 </li>
 

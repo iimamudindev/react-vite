@@ -26,18 +26,19 @@ const formatInputDate = (value) => {
 };
 
 const convertIndonesiaToApiDate = (value) => {
-    const parts = value.split("/");
+    const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value);
 
-    if (parts.length !== 3) {
-        return "";
-    }
+    if (!match) return "";
 
-    const [day, month, year] = parts;
+    const [, day, month, year] = match;
+
+    const date = new Date(0);
+    date.setFullYear(Number(year), Number(month) - 1, Number(day));
 
     if (
-        day.length !== 2 ||
-        month.length !== 2 ||
-        year.length !== 4
+        date.getFullYear() !== Number(year) ||
+        date.getMonth() !== Number(month) - 1 ||
+        date.getDate() !== Number(day)
     ) {
         return "";
     }
@@ -199,10 +200,19 @@ export default function Reports() {
         }
     };
 
+
+
     useEffect(() => {
-        fetchCashiers();
         fetchReport();
     }, []);
+
+    useEffect(() => {
+        const lastPage = Math.max(totalPages, 1);
+
+        if (currentPage > lastPage) {
+            setCurrentPage(lastPage);
+        }
+    }, [currentPage, totalPages]);
 
              return (
     <div className="d-flex min-vh-100">

@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { changePassword } from "../services/userService";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+
+
 
 export default function ChangePassword() {
   const [form, setForm] = useState({
@@ -10,11 +13,24 @@ export default function ChangePassword() {
     confirmPassword: "",
   });
 
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
 
+
   async function handleSubmit() {
+    if (!form.oldPassword || !form.newPassword || !form.confirmPassword) {
+      alert("Semua kolom password wajib diisi");
+      return;
+    }
+
     if (form.newPassword !== form.confirmPassword) {
       alert("Konfirmasi password tidak sama");
+      return;
+    }
+
+    if (form.newPassword.trim().length < 6) {
+      alert("Password baru minimal 6 karakter");
       return;
     }
 
@@ -26,21 +42,25 @@ export default function ChangePassword() {
         newPassword: form.newPassword,
       });
 
-      alert(res.message);
+      alert("Password berhasil diubah. Silakan login kembali.");
 
-      setForm({
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+
+      navigate("/", { replace: true });
 
     } catch (err) {
-      console.log(err.response?.data);
-      alert(err.response?.data?.message || "Gagal mengganti password");
+      console.error("CHANGE PASSWORD ERROR:", err.response?.data || err);
+
+      alert(
+        err.response?.data?.message || "Gagal mengganti password"
+      );
     } finally {
       setLoading(false);
     }
   }
+
 
   return (
     <div className="d-flex">

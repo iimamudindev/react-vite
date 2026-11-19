@@ -15,15 +15,17 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Login />} />
 
-      <Route
+
+
+
+       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["admin"]}>
             <DashboardFinal />
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/change-password"
         element={
@@ -36,7 +38,7 @@ export default function App() {
       <Route
         path="/activity-logs"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["admin"]}>
             <ActivityLogs />
           </ProtectedRoute>
         }
@@ -52,22 +54,22 @@ export default function App() {
 />
 
 
-<Route
-  path="/transactions"
-  element={
-    <ProtectedRoute>
-      <Transactions />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/products"
-  element={
-    <ProtectedRoute>
-      <Products />
-    </ProtectedRoute>
-  }
-/>
+      <Route
+        path="/transactions"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <Transactions />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/products"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <Products />
+          </ProtectedRoute>
+        }
+      />
 
 
 
@@ -80,14 +82,14 @@ export default function App() {
   }
 />
 
-<Route
-  path="/reports"
-  element={
-    <ProtectedRoute>
-      <Reports />
-    </ProtectedRoute>
-  }
-/>
+      <Route
+        path="/reports"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <Reports />
+          </ProtectedRoute>
+        }
+      />
 
 
     </Routes>

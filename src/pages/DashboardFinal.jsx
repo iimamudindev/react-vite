@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import DashboardChart from "../components/DashboardChart";
 import SalesChart from "../components/SalesChart";
 import api from "../services/api";
@@ -15,8 +15,17 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
 export default function DashboardFinal() {
+    const loggedInUser = (() => {
+        try {
+            return JSON.parse(localStorage.getItem("user") || "null");
+        } catch {
+            return null;
+        }
+    })();
+
+    const isAdmin = loggedInUser?.role === "admin";
+
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-    const dataUserRef = useRef(null);
     const toggleSidebar = () => {
         setSidebarCollapsed(!sidebarCollapsed);
     };
@@ -37,7 +46,14 @@ export default function DashboardFinal() {
     });
     const [users, setUsers] = useState([]);
     const [search, setSearch] = useState("");
-    const [roleFilter, setRoleFilter] = useState("");
+    const [roleFilter, setRoleFilter] = useState(() => {
+        const savedRole = localStorage.getItem("dashboardRoleFilter");
+
+        return ["admin", "user", "staff"].includes(savedRole)
+            ? savedRole
+            : "";
+    });
+
     const [sortField, setSortField] = useState("id");
     const [sortOrder, setSortOrder] = useState("asc");
     const [currentPage, setCurrentPage] = useState(1);
@@ -115,6 +131,10 @@ export default function DashboardFinal() {
         return `period=${period}`;
     };
     const fetchUsers = async () => {
+        if (!isAdmin) {
+            setUsers([]);
+            return;
+        }
         try {
             const res = await api.get("/users");
 
@@ -124,7 +144,6 @@ export default function DashboardFinal() {
                 setUsers(res.data.users || []);
             }
         } catch (err) {
-            console.log(err);
             toast.error("Gagal mengambil data user");
         }
     };
@@ -146,7 +165,6 @@ export default function DashboardFinal() {
     };
 
     const fetchBestSellingProducts = async () => {
-        console.log("🔥 FETCH BEST SELLING DIPANGGIL");
 
         try {
             const periodQuery = getPeriodQuery();
@@ -159,7 +177,6 @@ export default function DashboardFinal() {
                 `/products/best-selling?${periodQuery}${separator}sort_by=${sortBy}`
             );
 
-            console.log("🔥 BEST SELLING RESPONSE =", res.data);
 
             if (Array.isArray(res.data)) {
                 setBestSellingProducts(res.data);
@@ -175,7 +192,6 @@ export default function DashboardFinal() {
     };
 
     const fetchTransactionSummary = async () => {
-        console.log("💰 FETCH SUMMARY DIPANGGIL, PERIOD =", period);
         try {
             const periodQuery = getPeriodQuery();
 
@@ -185,7 +201,6 @@ export default function DashboardFinal() {
                 `/dashboard/summary?${periodQuery}`
             );
 
-            console.log("💰 SUMMARY RESPONSE =", res.data);
 
             setTransactionSummary({
                 grandTotal: Number(res.data.total_omzet || 0),
@@ -198,7 +213,6 @@ export default function DashboardFinal() {
         }
     };
     const fetchSalesChart = async () => {
-        console.log("📈 FETCH SALES CHART DIPANGGIL, PERIOD =", period);
 
         try {
             const periodQuery = getPeriodQuery();
@@ -209,7 +223,6 @@ export default function DashboardFinal() {
                 `/dashboard/sales-chart?${periodQuery}`
             );
 
-            console.log("📈 SALES CHART RESPONSE =", res.data);
 
             setSalesChartData(
                 Array.isArray(res.data) ? res.data : []
@@ -234,26 +247,44 @@ export default function DashboardFinal() {
     };
 
     const handleUpdate = async () => {
-        try {
+        if (!editingUser) return;
+        const password = editingUser.password;
 
-            console.log("DATA EDIT USER =", editingUser);
+        if (
+            password !== undefined &&
+            password !== null &&
+            password !== "" &&
+            (
+                typeof password !== "string" ||
+                password.trim().length < 6
+            )
+        ) {
+            toast.error("Password baru minimal 6 karakter");
+            return;
+        }
+
+        try {
+            setLoading(true);
+
             await api.put(`/users/${editingUser.id}`, editingUser);
+
             toast.success("User berhasil diperbarui");
+
             setIsModalOpen(false);
             setEditingUser(null);
 
-            fetchUsers();
+            await fetchUsers();
+
         } catch (err) {
-           
-                console.error(err);
-                toast.error("Gagal mengubah user");
-            
-         } finally {
-                setLoading(false);
-            
+            console.error("EDIT USER ERROR:", err.response?.data || err);
+            console.error("STATUS:", err.response?.status);
+            console.error("URL:", err.config?.url);
 
-
-
+            toast.error(
+                err.response?.data?.message || "Gagal mengubah user"
+            );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -289,7 +320,13 @@ export default function DashboardFinal() {
     };
 
 
-
+    useEffect(() => {
+        if (roleFilter) {
+            localStorage.setItem("dashboardRoleFilter", roleFilter);
+        } else {
+            localStorage.removeItem("dashboardRoleFilter");
+        }
+    }, [roleFilter]);
             
         
     
@@ -320,20 +357,29 @@ export default function DashboardFinal() {
         });
     };
     
+
     const handleCreate = async () => {
-        setLoading(true);
         if (
+            typeof newUser.name !== "string" ||
             !newUser.name.trim() ||
-            !newUser.email.trim() ||
-            !newUser.password.trim()
+            typeof newUser.email !== "string" ||
+            !newUser.email.trim()
         ) {
-            toast.error("Nama, email, dan password wajib diisi.");
+            toast.error("Nama dan email wajib diisi.");
+            return;
+        }
+
+        if (
+            typeof newUser.password !== "string" ||
+            newUser.password.trim().length < 6
+        ) {
+            toast.error("Password minimal 6 karakter.");
             return;
         }
 
         setLoading(true);
+
         try {
-            console.log(newUser);
             await api.post("/users", newUser);
 
             toast.success("User berhasil ditambahkan");
@@ -346,20 +392,17 @@ export default function DashboardFinal() {
                 role: "user",
             });
 
-            fetchUsers();
+            await fetchUsers();
+            setCurrentPage(1);
 
         } catch (err) {
-
             console.error(err);
-
             toast.error("Gagal menambah user");
-
         } finally {
-
             setLoading(false);
-
         }
     };
+
 
 
     const handleExportExcel = () => {
@@ -408,7 +451,9 @@ export default function DashboardFinal() {
             user.role?.toLowerCase().includes(keyword);
 
         const matchRole =
-            roleFilter === "" || user.role === roleFilter;
+            roleFilter.trim().toLowerCase() === "" ||
+            String(user.role || "").trim().toLowerCase() ===
+            roleFilter.trim().toLowerCase();
 
         return matchSearch && matchRole;
     });
@@ -443,7 +488,6 @@ export default function DashboardFinal() {
     const totalPages = Math.ceil(
         sortedUsers.length / usersPerPage
     );
-
     const safeTotalPages = Math.max(totalPages, 1);
 
     useEffect(() => {
@@ -458,8 +502,6 @@ export default function DashboardFinal() {
    
 
     
-    console.log("users =", users);
-    console.table(currentUsers);
 
 
 
@@ -474,7 +516,7 @@ export default function DashboardFinal() {
             <Sidebar
                 collapsed={sidebarCollapsed}
                 setCollapsed={setSidebarCollapsed}
-                dataUserRef={dataUserRef}
+
             />
 
             <div
@@ -538,28 +580,35 @@ export default function DashboardFinal() {
                     </div>
                    
                     <SalesChart data={salesChartData} />
-                    <div className="card border-0 shadow rounded-4 mb-4 mt-4">
-                    <div className="card-header bg-primary text-white">
-                            <h5 className="mb-0">
-                           <i className="bi bi-person-plus-fill me-2"></i>
-                               Tambah User
-                            </h5>
-                        </div>
 
-                        <div className="card-body">
-                            <UserForm
-                                newUser={newUser}
-                                handleInputChange={handleInputChange}
-                                handleCreate={handleCreate}
+                    {isAdmin && (
+                        <>
+                            <div className="card border-0 shadow rounded-4 mb-4 mt-4">
+                                <div className="card-header bg-primary text-white">
+                                    <h5 className="mb-0">
+                                        <i className="bi bi-person-plus-fill me-2"></i>
+                                        Tambah User
+                                    </h5>
+                                </div>
+
+                                <div className="card-body">
+                                    <UserForm
+                                        newUser={newUser}
+                                        handleInputChange={handleInputChange}
+                                        handleCreate={handleCreate}
+                                    />
+                                </div>
+                            </div>
+
+                            <StatsCards
+                                users={users}
+                                adminCount={users.filter(u => u.role === "admin").length}
+                                userCount={users.filter(u => u.role === "user").length}
+                                staffCount={users.filter(u => u.role === "staff").length}
                             />
-                        </div>
-                    </div>
-<StatsCards
-    users={users}
-    adminCount={users.filter(u => u.role === "admin").length}
-    userCount={users.filter(u => u.role === "user").length}
-    staffCount={users.filter(u => u.role === "staff").length}
-/>
+                        </>
+                    )}
+
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         <h5 className="fw-bold mb-0">
                             Ringkasan Penjualan
@@ -608,8 +657,6 @@ export default function DashboardFinal() {
                                         setDateFromInput(formatted);
                                         const apiDate = convertIndonesiaToApiDate(formatted);
 
-                                        console.log("📅 DATE FROM INPUT =", formatted);
-                                        console.log("📅 DATE FROM API =", apiDate);
 
                                         setDateFrom(apiDate);
                                     }}
@@ -645,8 +692,6 @@ export default function DashboardFinal() {
 
                                         const apiDate = convertIndonesiaToApiDate(formatted);
 
-                                        console.log("📅 DATE TO INPUT =", formatted);
-                                        console.log("📅 DATE TO API =", apiDate);
 
                                         setDateTo(apiDate);
                                        
@@ -936,7 +981,8 @@ export default function DashboardFinal() {
                         </div>
                     </div>
 
-
+                        {isAdmin && (
+                           <>
 
                     <DashboardChart
                         adminCount={users.filter(u => u.role === "admin").length}
@@ -948,7 +994,6 @@ export default function DashboardFinal() {
 
 
                         <div
-                        ref={dataUserRef}
                         id="data-user"
                         className="card shadow-sm border-0 rounded-4"
                         style={{ scrollMarginTop: "90px" }}
@@ -1043,16 +1088,19 @@ export default function DashboardFinal() {
 
                             </ul>
                         </nav>
-                    </div>
+                                        </div>
+
+                                    </>
+                                )}
+
+                            </div>
+                        </div>
 
 
-                </div>
-            </div>
-
-
+            {isAdmin && isModalOpen && editingUser && (
 
             
-            {isModalOpen && editingUser && (
+
                 <EditUserModal
                     user={editingUser}
                     handleChange={handleEditChange}

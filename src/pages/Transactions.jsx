@@ -76,12 +76,12 @@ export default function Transactions() {
   // DETAIL TRANSAKSI
   // =========================
   const handleDetail = async (id) => {
-    console.log("DETAIL DIKLIK:", id);
+
 
     try {
       const res = await api.get(`/transactions/${id}`);
 
-      console.log("DETAIL RESPONSE:", res.data);
+
 
       setSelectedTransaction(res.data);
       setShowModal(true);
@@ -98,7 +98,7 @@ export default function Transactions() {
       try {
         const res = await api.get("/transactions");
 
-        console.log("TRANSACTIONS =", res.data);
+
 
         setTransactions(
           Array.isArray(res.data) ? res.data : []

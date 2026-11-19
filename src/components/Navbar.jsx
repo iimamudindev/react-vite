@@ -1,10 +1,15 @@
+import { logout } from "../services/api";
 export default function Navbar({ toggleSidebar }) {
-  const user = JSON.parse(localStorage.getItem("user"));
+  let user = null;
 
-  function handleLogout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.href = "/";
+  try {
+    user = JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    user = null;
+  }
+
+  async function handleLogout() {
+    await logout();
   }
 
   return (
@@ -25,10 +30,7 @@ export default function Navbar({ toggleSidebar }) {
 
       {/* Judul */}
       <div className="ms-3">
-        <h5 className="mb-0 fw-bold">
-          Dashboard
-        </h5>
-
+        <h5 className="mb-0 fw-bold">Dashboard</h5>
         <small className="text-muted">
           Sistem Kasir & Manajemen Toko
         </small>
@@ -36,17 +38,11 @@ export default function Navbar({ toggleSidebar }) {
 
       {/* User */}
       <div className="ms-auto d-flex align-items-center">
-
         <div className="text-end me-3">
-
-          <div className="fw-semibold">
-            {user?.name}
-          </div>
-
+          <div className="fw-semibold">{user?.name}</div>
           <small className="text-muted text-capitalize">
             {user?.role}
           </small>
-
         </div>
 
         <div
@@ -67,7 +63,6 @@ export default function Navbar({ toggleSidebar }) {
           <i className="bi bi-box-arrow-right me-2"></i>
           Logout
         </button>
-
       </div>
     </nav>
   );

@@ -1,3 +1,4 @@
+
 import { useParams, useSearchParams } from "react-router-dom";
 import api from "../services/api";
 import "./Receipt.css";
@@ -10,14 +11,36 @@ export default function Receipt() {
 
   const [transaction, setTransaction] = useState(null);
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    const fetchReceipt = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await api.get(`/transactions/${id}`);
+
+        setTransaction(res.data.transaction);
+        setItems(res.data.items || []);
+      } catch (err) {
+        console.error("Gagal mengambil struk:", err);
+
+        setError(
+          err.response?.data?.message ||
+          "Gagal mengambil data struk. Silakan coba lagi."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchReceipt();
-  }, []);
-
+  }, [id]);
 
   useEffect(() => {
-    if (!transaction || !autoPrint) return;
+    if (!transaction || loading || !autoPrint) return;
 
     const handleAfterPrint = () => {
       setTimeout(() => {
@@ -29,31 +52,35 @@ export default function Receipt() {
 
     const timer = setTimeout(() => {
       window.print();
-    }, 5000);
+    }, 1000);
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener("afterprint", handleAfterPrint);
     };
-  }, [transaction, autoPrint]);
+  }, [transaction, loading, autoPrint]);
 
-  const fetchReceipt = async () => {
-    try {
-      const res = await api.get(`/transactions/${id}`);
-
-      setTransaction(res.data.transaction);
-      setItems(res.data.items);
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-
-  if (!transaction) {
+  if (loading) {
     return (
-      <div className="container mt-5">
-        Loading...
+      <div className="container mt-5 text-center">
+        Memuat struk...
+      </div>
+    );
+  }
+
+  if (error || !transaction) {
+    return (
+      <div className="container mt-5 text-center">
+        <div className="alert alert-danger">
+          {error || "Data transaksi tidak ditemukan."}
+        </div>
+
+        <button
+          className="btn btn-secondary"
+          onClick={() => window.location.reload()}
+        >
+          Coba Lagi
+        </button>
       </div>
     );
   }
@@ -62,7 +89,6 @@ export default function Receipt() {
     <div className="receipt-wrapper">
       <div className="receipt">
         <div style={{ textAlign: "center" }}>
-          
           <div className="receipt-title">
             TOKO IMAM
           </div>
@@ -70,8 +96,8 @@ export default function Receipt() {
           <div className="receipt-subtitle">
             Sistem Kasir & Manajemen Toko
           </div>
+        </div>
 
-          </div>
         <table style={{ width: "100%" }}>
           <tbody>
             <tr>
@@ -121,9 +147,11 @@ export default function Receipt() {
                   <td>
                     {item.product_name}
                     <br />
+
                     <span className="item-price">
                       Rp {Number(item.price).toLocaleString("id-ID")}
                     </span>
+
                     {discount > 0 && (
                       <>
                         <br />
@@ -135,7 +163,7 @@ export default function Receipt() {
                   </td>
 
                   <td align="center" className="item-qty">
-                    {Number(item.quantity)}
+                    {Number(item.quantity)} {item.unit}
                   </td>
 
                   <td align="right" className="item-total">
@@ -207,7 +235,6 @@ export default function Receipt() {
           <br />
           tidak dapat dikembalikan
         </div>
-
       </div>
     </div>
   );

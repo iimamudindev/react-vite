@@ -11,6 +11,7 @@ export default function POS() {
 
   const [paidAmount, setPaidAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const [searchProduct, setSearchProduct] = useState("");
 
@@ -179,6 +180,8 @@ const updateItemDiscount = (productId, discount) => {
   // ==================== PAYMENT ====================
 
   const handlePayment = async () => {
+    if (isProcessing) return;
+
     if (cart.length === 0) {
       alert("Keranjang masih kosong");
       return;
@@ -189,7 +192,31 @@ const updateItemDiscount = (productId, discount) => {
       return;
     }
 
+    setIsProcessing(true);
+
+    let receiptWindow = null;
+
     try {
+      // Buka popup langsung saat tombol BAYAR diklik
+      const popupWidth = 500;
+      const popupHeight = 700;
+
+      const left = Math.max(
+        0,
+        (window.screen.availWidth - popupWidth) / 2
+      );
+
+      const top = Math.max(
+        0,
+        (window.screen.availHeight - popupHeight) / 2
+      );
+
+      receiptWindow = window.open(
+        "",
+        "_blank",
+        `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`
+      );
+
       const payload = {
         items: cart.map((item) => ({
           product_id: item.id,
@@ -202,48 +229,43 @@ const updateItemDiscount = (productId, discount) => {
         payment_method: paymentMethod,
       };
 
-      const res = await api.post(
-        "/transactions",
-        payload
-      );
+      const res = await api.post("/transactions", payload);
 
       const receiptUrl = `/receipt/${res.data.transactionId}?autoprint=1`;
 
+      // Transaksi sudah berhasil dikonfirmasi backend
       setCart([]);
       setPaidAmount("");
       setPaymentMethod("cash");
 
-      await fetchProducts();
+      // Langsung arahkan popup ke struk
+      if (receiptWindow && !receiptWindow.closed) {
+        receiptWindow.location.href = receiptUrl;
+      } else {
+        alert(
+          "Transaksi berhasil, tetapi popup struk tidak terbuka. Silakan buka riwayat transaksi untuk mencetak struk."
+        );
+      }
 
-const popupWidth = 500;
-const popupHeight = 700;
-
-const left = Math.max(
-  0,
-  (window.screen.availWidth - popupWidth) / 2
-);
-
-const top = Math.max(
-  0,
-  (window.screen.availHeight - popupHeight) / 2
-);
-
-const receiptWindow = window.open(
-  receiptUrl,
-  "_blank",
-  `width=${popupWidth},height=${popupHeight},left=${left},top=${top},resizable=yes,scrollbars=yes`
-);
-      
-
+      // Refresh produk secara terpisah
+      fetchProducts();
     } catch (err) {
       console.error(err);
+
+      if (receiptWindow && !receiptWindow.closed) {
+        receiptWindow.close();
+      }
 
       alert(
         err.response?.data?.message ||
         "Transaksi gagal"
       );
+    } finally {
+      setIsProcessing(false);
     }
   };
+
+
 
   return (
     <div className="d-flex min-vh-100">
@@ -589,14 +611,14 @@ const receiptWindow = window.open(
                     className="btn btn-success btn-lg w-100 mt-4"
                     disabled={
                       cart.length === 0 ||
-                      paid < grandTotal
+                      paid < grandTotal ||
+                      isProcessing
                     }
                     onClick={handlePayment}
                   >
                     <i className="bi bi-cash-coin me-2"></i>
-                    BAYAR
+                    {isProcessing ? "MEMPROSES..." : "BAYAR"}
                   </button>
-
                 </div>
 
               </div>

@@ -79,7 +79,54 @@ body {
 .item-discount {
     font-size: 12px;
 }
+/* Tampilan popup struk */
+@media screen {
+    .receipt {
+        font-size: 11px;
+        line-height: 1.35;
+    }
 
+    .receipt-title {
+        font-size: 16px;
+    }
+
+    .receipt-subtitle {
+        font-size: 10px;
+        margin-bottom: 7px;
+    }
+
+    .receipt td,
+    .receipt th {
+        font-size: 11px;
+        padding: 2px 0;
+    }
+
+    .receipt>table:first-of-type {
+        table-layout: fixed;
+    }
+
+    .receipt>table:first-of-type td:first-child {
+        width: 22%;
+        white-space: nowrap;
+    }
+
+    .receipt>table:first-of-type td:last-child {
+        width: 78%;
+        overflow-wrap: anywhere;
+    }
+
+    .item-price {
+        font-size: 10px;
+    }
+
+    .item-discount {
+        font-size: 9px;
+    }
+
+    .line {
+        margin: 7px 0;
+    }
+}
 @media print {
     @page {
         size: A4 portrait;

@@ -52,7 +52,7 @@ export default function Receipt() {
 
     const timer = setTimeout(() => {
       window.print();
-    }, 1000);
+    }, 5000);
 
     return () => {
       clearTimeout(timer);
